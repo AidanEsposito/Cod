@@ -1,0 +1,13 @@
+barb number = bubble("Enter the number of terms: ");
+bait n1 = 0;
+bait n2 = 1;
+bait nextTerm;
+
+cast("Fibonacci Series:");
+
+stream (bait i = 1; i <= number; i++) {
+  cast(n1);
+  nextTerm = n1 + n2;
+  n1 = n2;
+  n2 = nextTerm;
+}

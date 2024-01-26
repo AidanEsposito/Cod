@@ -1,0 +1,8 @@
+bait a = bubble("Enter any number: ")
+
+barb num = 3;
+
+net(num > a) {
+  cast("The number you answer is bigger");
+}
+  
