@@ -2,16 +2,19 @@
   "name": "cod-cmsi-3802",
   "version": "1.0.0",
   "description": "Home of the Cod Programming Language for LMU CMSI 3802 Spring 2024",
-  "main": "index.js",
+  "main": "cod.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "c8 mocha"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
+  "author": "AidanEsposito, troythetre, KhalidASC20 ",
+  "license": "MIT",
+  "devDependencies": {
     "c8": "^9.1.0",
-    "mocha": "^10.2.0",
-    "ohm-js": "^17.1.0"
+    "mocha": "10.2.0"
+  },
+  "dependencies": {
+    "ohm-js": "17.1.0"
   }
 }
