@@ -33,6 +33,18 @@ hello.js
 add2Num.cod
 <img width="200" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/9b68bfcb-6d9b-4c59-ad9e-9df51716aa97">
 
+add2num.js
+<img width="200" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/8f6eb1bf-7e0b-4964-883d-ef3c7d8c3cad">
+
+swapVar.cod
+<img width="200" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/32f6c855-fb28-4cc8-84aa-f7e69da80ac0">
+
+swapVar.js
+<img width="200" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/dacbea7e-fccc-4738-8a51-f9bd5bbbbc1a">
+
+
+
+
 
 
 
