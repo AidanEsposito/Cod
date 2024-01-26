@@ -42,7 +42,18 @@ swapVar.cod
 swapVar.js
 <img width="200" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/dacbea7e-fccc-4738-8a51-f9bd5bbbbc1a">
 
+fib.cod
+<img width="444" alt="Screen Shot 2024-01-26 at 1 12 05 PM" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/89878648/404aa7f2-3722-4c88-bf6c-c809b3e80d88">
 
+
+fib.js
+<img width="477" alt="Screen Shot 2024-01-26 at 1 11 39 PM" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/89878648/ad15b35a-955e-44b2-9cea-4e35257dcbc4">
+
+compare.cod
+<img width="367" alt="Screen Shot 2024-01-26 at 1 12 29 PM" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/89878648/5cdf5ea0-9dc0-40c0-9343-9ea953c96f64">
+
+compare.js
+<img width="403" alt="Screen Shot 2024-01-26 at 1 12 46 PM" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/89878648/631f897d-5bc5-4e2c-933d-6a59434fd0ca">
 
 
 
