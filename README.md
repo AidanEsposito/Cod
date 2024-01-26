@@ -28,6 +28,7 @@ hello.cod
 <img width="199" alt="codexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/97552458/21454442-09cd-449c-a721-06d3911ca1d0">
 
 hello.js
-<img width="389" alt="problem6" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/97552458/f5362f2d-6c5e-4329-a305-486bc90a9229">
+<img width="168" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/97552458/066e1a80-9310-4fb0-8b86-7449b3bd9f4d">
+
 
 
