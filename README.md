@@ -30,7 +30,10 @@ hello.cod
 hello.js
 <img width="168" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/97552458/066e1a80-9310-4fb0-8b86-7449b3bd9f4d">
 
-add2Num.cod ![image](https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/f3b09353-b33f-4ec6-90d4-97969b5d5bc8)
+add2Num.cod
+<img width="168" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/9b68bfcb-6d9b-4c59-ad9e-9df51716aa97">
+
+
 
 
 
