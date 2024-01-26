@@ -1,0 +1,17 @@
+{
+  "name": "cod-cmsi-3802",
+  "version": "1.0.0",
+  "description": "Home of the Cod Programming Language for LMU CMSI 3802 Spring 2024",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "c8": "^9.1.0",
+    "mocha": "^10.2.0",
+    "ohm-js": "^17.1.0"
+  }
+}
