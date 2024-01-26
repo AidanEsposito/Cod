@@ -30,5 +30,6 @@ hello.cod
 hello.js
 <img width="168" alt="javascriptexample1" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/97552458/066e1a80-9310-4fb0-8b86-7449b3bd9f4d">
 
+add2Num.cod![Screenshot 2024-01-25 170659](https://github.com/AidanEsposito/Cod-CMSI-3802/assets/68346809/656e092d-1255-43f2-bf2e-d2559ca77322)
 
 
