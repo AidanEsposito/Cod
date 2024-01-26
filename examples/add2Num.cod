@@ -1,0 +1,6 @@
+barb num1 = 5
+barb num2 = 3
+
+barb sum = num1 + num2
+
+cast('The sum of ' + num1 + ' and ' + num2 + ' is: ' + sum)
