@@ -1,3 +1,115 @@
-Cod{
+ Cod{
+    Program     =  Stmt+ 
+    Stmt        =  VarDecl
+                |  TypeDecl
+                |  FuncDecl
+                |  ClassDecl
+                |  IfStmt
+                |  ForStmt
+                |  WhileStmt
+                |  ReturnStmt
+                |  BreakStmt
+                |  ContinStmt
+                |  TryStmt
+            
+    VarDecl     = id "="   Exp                                     --variable_public
+                | public   id "=" Exp
+                | private  id "=" Exp                               --variable_private
+                | type id
+                | public   type id                                  -- type_public
+                | private  type id                                  -- type_private
+
+    TypeDecl    = struct id "{" Field* "}"
+
+    FuncDecl    = Type id "(" Params ")" Block               
+                | public Type id "(" Params ")" Block               --function_public
+                | private Type id "(" Params ")" Block              --function_private
+
+    StructDecl  = struct id "{" VarDecl* "}" ";"                     -- struct
+
+    ClassDecl   = class id ":"                                      --class_public
+                | public class id ":"                               --class_private
+                | private class id ":"     
+                
+    Type        = Type "[" "]"                                       -- array
+                | id                                                 -- id
+                | void                                               -- void            
+        
+    Block       ="{" Stmt* "}"                                      --block
+
+    IfStmt      = if Exp Block else Block                           --ifelse
+                | if Exp Block else IfStmt                          --nested_if
+                | if Exp Block                                      -- if     
+
+    ForStmt     = for id in Exp ("..." | "..<") Exp Block           -- for
+                | for id in Exp Block 
+
+    WhileStmt   = while Exp Block                                   -- while    
+
+    ReturnStmt  = return Exp                                        -- return
+
+    BreakStmt   = break                                             -- break
+
+    ContinStmt  = continue                                         -- continue
+
+    TryStmt     = try Block Catch* //possibly add finally
+    Catch       = catch "(" id ")" Block
+
+    Params      = "(" NonemptyListofListOf<Param, ","> ")"
+    Param       = id ":" Type 
     
-}
+   
+    Exp         = Exp "||" Exp1                                     -- or
+                |Exp1
+
+    Exp1        = Exp1 "&&" Exp2                                    -- and
+                | Exp2
+                
+    Exp2        = Exp2 relop Exp3                                    
+                | Exp3
+                
+    Exp3        = Exp3 ("+" | "-") Term                             -- add_subtract
+                | Term
+
+    Term        = Term ("*" | "/" | "%") Factor                     -- multi_divide_modulo
+                | Factor
+
+    Factor      = Primary "**" Factor                                          
+                | Primary
+
+    Primary     = "(" Exp ")"                                       -- parens
+                | "[" NonemptyListof<Exp, ","> "]"                  -- array
+                | id
+                | num
+
+    relop = "<=" | "<" | ">=" | ">" | "==" | "!="
+
+    let         = "let" ~alnum
+    const       = "const" ~alnum
+    struct      = "Struct" ~alnum
+    function    = "funtion" ~alnum    
+    if          = "if" ~idchar
+    else        = "else" ~idchar
+    for         = "for"  ~idchar
+    break       = "break"     ~idchar
+    continue    = "continue" ~idchar
+    try         = "try" ~idchar
+    repeat      = "repeat" ~idchar
+    throw       = "throw" ~idchar
+    return      = "return" ~idchar
+    case        = "case" ~idchar
+    catch       = "catch" ~idchar
+    class       = "class"    ~idchar  
+    public      = "public"  ~idchar
+    private     = "private" ~idchar
+    keyword     = let | const | struct | function
+                | if | else | for | return | break | continue
+                | try | repeat | throw | return | for | case
+                | catch | class | public | private
+    
+    id  = ~keyword letter idchar*
+    idchar = alnum | "_"
+    num = digit+
+    space    += "//" (~"\n" any)*                                      -- comment
+ 
+ }
