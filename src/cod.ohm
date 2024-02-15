@@ -1,122 +1,134 @@
- Cod{
-    Program     =  Stmt+ 
-    Stmt        =  VarDecl
-                |  TypeDecl
-                |  FuncDecl
-                |  ClassDecl
-                |  IfStmt
-                |  ForStmt
-                |  WhileStmt
-                |  ReturnStmt
-                |  BreakStmt
-                |  ContinStmt
-                |  TryStmt
-                | PrintStmt
+Cod{
+    Program       =  Stmt+ 
+    Stmt       	=  VarDecl
+                  |  TypeDecl
+                  |  FuncDecl
+                  |  ClassDecl
+                  |  IfStmt
+                  |  ForStmt
+                  |  WhileStmt
+                  |  ReturnStmt
+                  |  BreakStmt
+                  |  ContinStmt
+                  |  TryStmt
+                  | PrintStmt
                 
                 
                 
-    VarDecl     = public? id "=" Exp                                --variable_public
-                | private? id "=" Exp                               --variable_private
-                | public?  Type id                                  -- type_public
-                | private  Type id                                  -- type_private
+    VarDecl        = public? id "=" Exp                                --variable_public
+                   | private? id "=" Exp                               --variable_private
+                   | public?  Type id                                  -- type_public
+                   | private  Type id                                  -- type_private
 
-    TypeDecl    = struct id "{" VarDecl* "}"
+    TypeDecl       = struct id "{" VarDecl* "}"
 
-    FuncDecl    = public? Type id "(" Params ")" Block               --function_public
-                | private? Type id "(" Params ")" Block              --function_private
+    FuncDecl       = public? Type id "(" Params ")" Block               --function_public
+               	 | private? Type id "(" Params ")" Block              --function_private
 
-    StructDecl  = struct id "{" VarDecl* "}" ";"                     -- struct
+    StructDecl     = struct id "{" VarDecl* "}" ";"                     -- struct
 
-    ClassDecl   = public? class id ":"                               --class_public
-                | private? class id ":"                              --class_private
+    ClassDecl      = public? class id ":"                               --class_public
+                	 | private? class id ":"                              --class_private
                 
-    Type        = Type "[" "]"                                       -- array
-                | id                                                 -- id
-                | void                                               -- void            
+    Type        	 = Type "[" "]"                                       -- array
+                        | id                                                 -- id
+                        | void                                               -- void            
         
-    Block       ="{" Stmt* "}"                                      --block
+    Block       	 = "{" Stmt* "}"                                      --block
 
-	PrintStmt = print Exp":"
-    IfStmt      = if Exp Block else Block                           --if_else
-                | if Exp Block else IfStmt                          --nested_if
-                | if Exp Block                                      -- if     
+	PrintStmt 	    = print ":" Exp
+    IfStmt      	 = if Exp Block else Block                           --if_else
+                        | if Exp Block else IfStmt                          --nested_if
+                        | if Exp Block                                      -- if     
 
-    ForStmt     = for id in Exp ("..." | "..<") Exp Block           -- for_in_range
-                | for id in Exp Block                                          -- for_in_collection
+    ForStmt        = for id in Exp ("..." | "..<") Exp Block           -- for_in_range
+                	 | for id in Exp Block                                          -- for_in_collection
 
-    WhileStmt   = while Exp Block                                   -- while    
+    WhileStmt      = while Exp Block                                   -- while    
 
-    ReturnStmt  = return Exp                                        -- return
+    ReturnStmt     = return Exp                                        -- return
 
-    BreakStmt   = break                                             -- break
+    BreakStmt      = break                                             -- break
 
-    ContinStmt  = continue                                         -- continue
+    ContinStmt     = continue                                         -- continue
 
-    TryStmt     = try Block Catch* //possibly add finally
-    Catch       = catch "(" id ")" Block
+    TryStmt        = try Block Catch* //possibly add finally
+    Catch          = catch "(" id ")" Block
 
-    Params      = "(" ListOf<Param, ","> ")"
-    Param       = id ":" Type 
+    Params         = "(" ListOf<Param, ","> ")"
+    Param          = id ":" Type 
     
    
-    Exp         = Exp "||" Exp1                                     -- or
-                |Exp1
+    Exp         	 = Exp "||" Exp1                                     -- or
+               	 | Exp1
 
-    Exp1        = Exp1 "&&" Exp2                                    -- and
-                | Exp2
+    Exp1        	 = Exp1 "&&" Exp2                                    -- and
+                	 | Exp2
                 
-    Exp2        = Exp2 relop Exp3                                   -- relational_operator                                 
-                | Exp3
+    Exp2        	 = Exp2 relop Exp3                                   -- relational_operator                                 
+                	 | Exp3
                 
-    Exp3        = Exp3 ("+" | "-") Term                             -- add_subtract
-                | Term
+    Exp3        	 = Exp3 ("+" | "-") Term                             -- add_subtract
+                	 | Term
 
-    Term        = Term ("*" | "/" | "%") Factor                     -- multi_divide_modulo
-                | Factor
+    Term        	 = Term ("*" | "/" | "%") Factor                     -- multi_divide_modulo
+                	 | Factor
 
-    Factor      = Primary "**" Factor                                  --exponent                                 
-                | Primary
+    Factor      	 = Primary "**" Factor                                  --exponent                                 
+                	 | Primary
 
-    Primary     = "(" Exp ")"                                       -- parens
-                | "[" NonemptyListOf<Exp, ","> "]"                  -- array
-                | id
-                | num
+    Primary        = "(" Exp ")"                                       -- parens
+                   | "[" NonemptyListOf<Exp, ","> "]"                  -- array
+                   | id
+                   | num
+                   | null
+                   | true
+                   | false
+                   | stringlit
 
-    relop = "<=" | "<" | ">=" | ">" | "==" | "!="
+    relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!="
 
-    let         = "let" ~alnum
-    const       = "const" ~alnum
-    struct      = "Struct" ~alnum
-    function    = "function" ~alnum   
-    if          = "if" ~idchar
-    else        = "else" ~idchar
-    for         = "for"  ~idchar
-    break       = "break"     ~idchar
-    continue    = "continue" ~idchar
-    try         = "try" ~idchar
-    repeat      = "repeat" ~idchar
-    throw       = "throw" ~idchar
-    return      = "return" ~idchar
-    case        = "case" ~idchar
-    catch       = "catch" ~idchar
-    class       = "class"    ~idchar   
-    public      = "public" ~idchar
-    private     = "private" ~idchar
-    void         = "void" ~idchar
+    let         	 = "let" ~alnum
+    const       	 = "const" ~alnum
+    struct      	 = "Struct" ~alnum
+    function    	 = "function" ~alnum   
+    if         	 = "if" ~idchar
+    else       	 = "else" ~idchar
+    for         	 = "for"  ~idchar
+    break      	 = "break"     ~idchar
+    continue       = "continue" ~idchar
+    try         	 = "try" ~idchar
+    repeat      	 = "repeat" ~idchar
+    throw       	 = "throw" ~idchar
+    return      	 = "return" ~idchar
+    case        	 = "case" ~idchar
+    catch       	 = "catch" ~idchar
+    class       	 = "class"    ~idchar   
+    public      	 = "public" ~idchar
+    private        = "private" ~idchar
+    void         	 = "void" ~idchar
     in             = "in" ~idchar
-    while        ="while" ~idchar
-    print         ="print" ~idchar
+    while        	 ="while" ~idchar
+    print          ="print" ~idchar
+    null 			 = "null" ~idchar
+  	true 			    = "true" ~idchar
+  	false 			 = "false" ~idchar
     
 
-    keyword     = let | const | struct | function
-                | if | else | for | return | break | continue
-                | try | repeat | throw | return | for | case
-                | catch | class | public | private | void | in
-                | while | print
+    keyword        = let | const | struct | function
+                	 | if | else | for | return | break | continue
+               	 | try | repeat | throw | return | for | case
+                	 | catch | class | public | private | void | in
+                	 | while | print | null | true | false
     
-    id  = ~keyword letter idchar*
-    idchar = alnum | "_"
-    num = digit+
-    space    += "//" (~"\n" any)*                                      -- comment
- 
+    id  			   = ~keyword letter idchar*
+    idchar 			= alnum | "_"
+    num 			   = digit+
+    
+    stringlit 		= "\"" char* "\""
+  	char 			   = "\\u{" hexDigit+ "}"   									--codepoint
+       				| "\\" any               									--nonbackslash
+       				| ~"\"" any
+
+    space    		+= "//" (~"\n" any)*                                      -- comment
  }
