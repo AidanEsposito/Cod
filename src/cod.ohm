@@ -11,56 +11,56 @@ Cod{
                   |  BreakStmt
                   |  ContinStmt
                   |  TryStmt
-                  | PrintStmt
+                  |  PrintStmt
                 
                 
                 
-    VarDecl        = public? id "=" Exp                                --variable_public
-                   | private? id "=" Exp                               --variable_private
-                   | public?  Type id                                  -- type_public
-                   | private  Type id                                  -- type_private
+    VarDecl        = ocean? tag "=" Exp                                --variable_public
+                   | lake? tag "=" Exp                               --variable_private
+                   | ocean?  Type tag                                  -- type_public
+                   | lake?  Type tag                                 -- type_private
 
-    TypeDecl       = struct id "{" VarDecl* "}"
+    TypeDecl       = boat tag "{" VarDecl* "}"
 
-    FuncDecl       = public? Type id "(" Params ")" Block               --function_public
-               	 | private? Type id "(" Params ")" Block              --function_private
+    FuncDecl       = ocean? Type tag "(" Params ")" Block               --function_public
+               	 | lake? Type tag "(" Params ")" Block              --function_private
 
-    StructDecl     = struct id "{" VarDecl* "}" ";"                     -- struct
+    StructDecl     = boat tag "{" VarDecl* "}" ";"                     -- struct
 
-    ClassDecl      = public? class id ":"                               --class_public
-                	 | private? class id ":"                              --class_private
+    ClassDecl      = ocean? school tag ":"                               --class_public
+                	 | lake? school  tag ":"                              --class_private
                 
     Type        	 = Type "[" "]"                                       -- array
-                        | id                                                 -- id
-                        | void                                               -- void            
+                        | tag                                                 -- id
+                        | lost                                              -- void            
         
     Block       	 = "{" Stmt* "}"                                      --block
 
-	PrintStmt 	    = print ":" Exp
+	 PrintStmt 	    = cast ":" Exp
     IfStmt      	 = if Exp Block else Block                           --if_else
                         | if Exp Block else IfStmt                          --nested_if
                         | if Exp Block                                      -- if     
 
-    ForStmt        = for id in Exp ("..." | "..<") Exp Block           -- for_in_range
-                	 | for id in Exp Block                                          -- for_in_collection
+    ForStmt        = stream tag in Exp ("..." | "..<") Exp Block           -- for_in_range
+                	 | stream tag in Exp Block                                          -- for_in_collection
 
-    WhileStmt      = while Exp Block                                   -- while    
+    WhileStmt      = tide Exp Block                                   -- while    
 
-    ReturnStmt     = return Exp                                        -- return
+    ReturnStmt     = reel Exp                                        -- return
 
-    BreakStmt      = break                                             -- break
+    BreakStmt      = snap                                             -- break
 
-    ContinStmt     = continue                                         -- continue
+    ContinStmt     = flow                                        -- continue
 
-    TryStmt        = try Block Catch* //possibly add finally
-    Catch          = catch "(" id ")" Block
+    TryStmt        = pitch Block Catch* //possibly add finally
+    Catch          = catch "(" tag* ")" Block
 
     Params         = "(" ListOf<Param, ","> ")"
-    Param          = id ":" Type 
+    Param          = tag ":" Type 
     
    
     Exp         	 = Exp "||" Exp1                                     -- or
-               	 | Exp1
+               	     | Exp1
 
     Exp1        	 = Exp1 "&&" Exp2                                    -- and
                 	 | Exp2
@@ -77,58 +77,58 @@ Cod{
     Factor      	 = Primary "**" Factor                                  --exponent                                 
                 	 | Primary
 
-    Primary        = "(" Exp ")"                                       -- parens
-                   | "[" NonemptyListOf<Exp, ","> "]"                  -- array
-                   | id
-                   | num
-                   | null
-                   | true
-                   | false
-                   | stringlit
+    Primary          = "(" Exp ")"                                       -- parens
+                     | "[" NonemptyListOf<Exp, ","> "]"                  -- array
+                     | tag                                               --id
+                     | fish                                              --num
+                     | sock                                              --null                 
+                     | hooked                                              --true
+                     | unhooked                                             --false
+                     | stringlit                                         --string
 
-    relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!="
+    relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!=" 
 
-    let         	 = "let" ~alnum
-    const       	 = "const" ~alnum
-    struct      	 = "Struct" ~alnum
-    function    	 = "function" ~alnum   
-    if         	 = "if" ~idchar
-    else       	 = "else" ~idchar
-    for         	 = "for"  ~idchar
-    break      	 = "break"     ~idchar
-    continue       = "continue" ~idchar
-    try         	 = "try" ~idchar
-    repeat      	 = "repeat" ~idchar
-    throw       	 = "throw" ~idchar
-    return      	 = "return" ~idchar
-    case        	 = "case" ~idchar
-    catch       	 = "catch" ~idchar
-    class       	 = "class"    ~idchar   
-    public      	 = "public" ~idchar
-    private        = "private" ~idchar
-    void         	 = "void" ~idchar
-    in             = "in" ~idchar
-    while        	 ="while" ~idchar
-    print          ="print" ~idchar
-    null 			 = "null" ~idchar
-  	true 			    = "true" ~idchar
-  	false 			 = "false" ~idchar
+    land         	 = "land" ~idchar       --let
+    docked      	 = "docked" ~idchar      --const
+    boat      	     = "boat" ~idchar       --struct
+    function    	 = "function" ~idchar   --function   
+    if         	     = "if" ~idchar         --if
+    else       	     = "else" ~idchar       --else
+    stream           = "stream" ~idchar     --for
+    snap      	     = "snap"   ~idchar     --break
+    flow             = "flow" ~idchar       --continue
+    pitch            = "pitch" ~idchar      --try
+    recast      	 = "recast" ~idchar     --repeat
+    throw       	 = "throw" ~idchar      --throw
+    reel      	     = "reel" ~idchar       --return
+    tacklebox        = "tacklebox" ~idchar       --case
+    catch       	 = "catch" ~idchar      --catch
+    school       	 = "school" ~idchar     --class   
+    ocean      	     = "ocean" ~idchar      --public
+    lake             = "lake" ~idchar       --private
+    lost         	 = "lost" ~idchar       --void
+    in               = "in" ~idchar         --in
+    tide        	 = "tide" ~idchar        --while
+    cast             = "cast" ~idchar        --print
+    sock 			 = "sock" ~idchar        --null
+  	hooked 	     = "!"? "hooked" ~idchar     --true
+  	unhooked 		 = "!"? "unhooked" ~idchar   --False
     
 
-    keyword        = let | const | struct | function
-                	 | if | else | for | return | break | continue
-               	 | try | repeat | throw | return | for | case
-                	 | catch | class | public | private | void | in
-                	 | while | print | null | true | false
+    keyword        = land | docked | boat | function
+                   | if | else | reel | snap | flow
+               	   | pitch | recast | throw | stream | tacklebox
+                   | catch | school | ocean | lake | lost | in
+                   | tide | cast | sock | hooked | unhooked
     
-    id  			   = ~keyword letter idchar*
+    tag  			= ~keyword "!"? letter idchar*
     idchar 			= alnum | "_"
-    num 			   = digit+
+    fish 			= "-"? "!"? digit+ ("." digit+)? (("e" | "E") ("+" | "-")? digit+)?
     
     stringlit 		= "\"" char* "\""
-  	char 			   = "\\u{" hexDigit+ "}"   									--codepoint
+  	 char 			   = "\\u{" hexDigit+ "}"   									--codepoint
        				| "\\" any               									--nonbackslash
        				| ~"\"" any
 
-    space    		+= "//" (~"\n" any)*                                      -- comment
+    space    		+= "//" (~"\n" any)*                                      --comment
  }
