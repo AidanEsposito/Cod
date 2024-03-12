@@ -1,8 +1,8 @@
 Cod{
-    Program       =  Stmt+ 
-    Stmt       	=  VarDecl
+    Program      =  Stmt+ 
+    Stmt       	= FuncDecl
                   |  TypeDecl
-                  |  FuncDecl
+                  |  VarDecl
                   |  ClassDecl
                   |  IfStmt
                   |  ForStmt
@@ -15,24 +15,34 @@ Cod{
                 
                 
                 
-    VarDecl        = ocean? tag "=" Exp                                --variable_public
-                   | lake? tag "=" Exp                               --variable_private
+    VarDecl  = ocean? Type tag "=" Exp                                --variable_public
+                   | lake?     Type  tag "=" Exp                               --variable_private
                    | ocean?  Type tag                                  -- type_public
-                   | lake?  Type tag                                 -- type_private
+                   | lake?      Type tag                                 -- type_private
+                   
 
     TypeDecl       = boat tag "{" VarDecl* "}"
 
-    FuncDecl       = ocean? Type tag "(" Params ")" Block               --function_public
-               	 | lake? Type tag "(" Params ")" Block              --function_private
-
+     FuncDecl       = ocean? Type tag "(" Params ")" Block           --function_public
+               			    | lake? Type tag "(" Params ")" Block              --function_private
+                            | ocean? Type tag "("")" Block               		  --function_public_no_params
+                            | lake? Type tag "("")" Block               			--function_private_no_params
+                            
     StructDecl     = boat tag "{" VarDecl* "}" ";"                     -- struct
 
-    ClassDecl      = ocean? school tag ":"                               --class_public
-                	 | lake? school  tag ":"                              --class_private
+    ClassDecl      = ocean?  school tag ":"                               --class_public
+                	      | lake?  school  tag ":"                              --class_private
                 
     Type        	 = Type "[" "]"                                       -- array
                         | tag                                                 -- id
-                        | lost                                              -- void            
+                        | lost                                              -- void     
+                        | int												--int
+                        | float												--float
+                        | string
+                        | land
+                        | docked
+                        | boolean
+                        | StructDecl
         
     Block       	 = "{" Stmt* "}"                                      --block
 
@@ -41,8 +51,8 @@ Cod{
                         | if Exp Block else IfStmt                          --nested_if
                         | if Exp Block                                      -- if     
 
-    ForStmt        = stream tag in Exp ("..." | "..<") Exp Block           -- for_in_range
-                	 | stream tag in Exp Block                                          -- for_in_collection
+    ForStmt       = stream tag in Exp ("..." | "..<") Exp Block           -- for_in_range
+                	    | stream tag in Exp Block                                          -- for_in_collection
 
     WhileStmt      = tide Exp Block                                   -- while    
 
@@ -84,12 +94,17 @@ Cod{
                      | sock                                              --null                 
                      | hooked                                              --true
                      | unhooked                                             --false
-                     | stringlit                                         --string
+                     | stringlit                                        			 --string
+                     
 
     relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!=" 
 
     land         	 = "land" ~idchar       --let
-    docked      	 = "docked" ~idchar      --const
+    docked        = "docked" ~idchar      --const
+    int 			   = "int" ~idchar 			--int
+    float 			  = "float" ~idchar			--float
+    string			 = "string" ~idchar      --string
+    boolean 	  = "boolean" ~idchar --boolean
     boat      	     = "boat" ~idchar       --struct
     function    	 = "function" ~idchar   --function   
     if         	     = "if" ~idchar         --if
@@ -116,10 +131,10 @@ Cod{
     
 
     keyword        = land | docked | boat | function
-                   | if | else | reel | snap | flow
+                   | if | else | reel | snap | flow | int | float | string
                	   | pitch | recast | throw | stream | tacklebox
                    | catch | school | ocean | lake | lost | in
-                   | tide | cast | sock | hooked | unhooked
+                   | tide | cast | sock | hooked | unhooked | boolean
     
     tag  			= ~keyword "!"? letter idchar*
     idchar 			= alnum | "_"
