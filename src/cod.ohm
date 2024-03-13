@@ -65,7 +65,7 @@ Cod{
     TryStmt        = pitch Block Catch* //possibly add finally
     Catch          = catch "(" tag* ")" Block
 
-    Params         = "(" ListOf<Param, ","> ")"
+    Params         = ListOf<Param, ","> 
     Param          = tag ":" Type 
     
    
