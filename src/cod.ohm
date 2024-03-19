@@ -1,6 +1,6 @@
 Cod{
-    Program      =  Stmt+ 
-    Stmt       	= FuncDecl
+    Program       =  Stmt+ 
+    Stmt       	  =  FuncDecl
                   |  TypeDecl
                   |  VarDecl
                   |  ClassDecl
@@ -15,18 +15,18 @@ Cod{
                 
                 
                 
-    VarDecl  = ocean? Type tag "=" Exp                                --variable_public
-                   | lake?     Type  tag "=" Exp                               --variable_private
-                   | ocean?  Type tag                                  -- type_public
-                   | lake?      Type tag                                 -- type_private
+    VarDecl  = ocean? Type tag "=" Exp         --variable_public
+                   | lake? Type  tag "=" Exp   --variable_private
+                   | ocean? Type tag           --type_public
+                   | lake? Type tag            --type_private
                    
 
     TypeDecl       = boat tag "{" VarDecl* "}"
 
-     FuncDecl       = ocean? Type tag "(" Params ")" Block           --function_public
-               			    | lake? Type tag "(" Params ")" Block              --function_private
-                            | ocean? Type tag "("")" Block               		  --function_public_no_params
-                            | lake? Type tag "("")" Block               			--function_private_no_params
+     FuncDecl      = ocean? Type tag "(" Params ")" Block           --function_public
+               		| lake? Type tag "(" Params ")" Block              --function_private
+                  | ocean? Type tag "("")" Block               		  --function_public_no_params
+                  | lake? Type tag "("")" Block               			--function_private_no_params
                             
     StructDecl     = boat tag "{" VarDecl* "}" ";"                     -- struct
 
