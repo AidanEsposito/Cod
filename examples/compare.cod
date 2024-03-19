@@ -1,8 +1,8 @@
-bait a = bubble("Enter any number: ")
+string a = "Enter any number: "
 
-barb num = 3
+int num = 3
 
-net(num > a) {
-  cast("The number you answer is bigger")
+if(num > a){
+  cast: "The number you answer is bigger"
 }
   

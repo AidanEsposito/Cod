@@ -1,11 +1,11 @@
-bait a = bubble("Write first variable here: ")
-bait b = bubble("Write second variable here: ")
+string a = "Write first variable here: "
+string b = "Write second variable here: "
 
-bait temp
+string temp
 
 temp = a
 a = b
 b = temp
 
-cast("Variable A is now " + a)
-cast("Varaibel B is now " + b)
+cast: "Variable A is now " + a
+cast: "Varaibel B is now " + b
