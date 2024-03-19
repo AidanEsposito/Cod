@@ -1,14 +1,10 @@
-#! /usr/bin/env node
-
 import * as fs from "node:fs/promises"
-import process from "process"
-import compile from "./compiler.js"
-//import { Program } from "./core.js"
 import stringify from "graph-stringify"
+import compile from "./compiler.js"
 
 const help = `Cod compiler
 
-Syntax: cod <filename> <outputType>
+Syntax: carlos <filename> <outputType>
 
 Prints to stdout according to <outputType>, which must be one of:
 
@@ -22,7 +18,7 @@ async function compileFromFile(filename, outputType) {
   try {
     const buffer = await fs.readFile(filename)
     const compiled = compile(buffer.toString(), outputType)
-    console.log(compiled instanceof Program ? stringify(compiled) : compiled)
+    console.log(stringify(compiled, "kind") || compiled)
   } catch (e) {
     console.error(`\u001b[31m${e}\u001b[39m`)
     process.exitCode = 1
