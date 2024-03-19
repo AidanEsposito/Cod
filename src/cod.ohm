@@ -28,10 +28,10 @@ Cod{
                   | ocean? Type tag "("")" Block               		  --function_public_no_params
                   | lake? Type tag "("")" Block               			--function_private_no_params
                             
-    StructDecl     = boat tag "{" VarDecl* "}" ";"                     -- struct
+    StructDecl     = boat tag "{" VarDecl* "}"                      -- struct
 
     ClassDecl      = ocean?  school tag ":"                               --class_public
-                	      | lake?  school  tag ":"                              --class_private
+                	   | lake?  school  tag ":"                              --class_private
                 
     Type        	 = Type "[" "]"                                       -- array
                         | tag                                                 -- id
@@ -84,8 +84,11 @@ Cod{
     Term        	 = Term ("*" | "/" | "%") Factor                     -- multi_divide_modulo
                 	 | Factor
 
-    Factor      	 = Primary "**" Factor                                  --exponent                                 
+    Factor      	 = Primary "**" Factor                                  --exponent 
+                   | FuncCall                                
                 	 | Primary
+
+    FuncCall       =  tag "(" ListOf<Exp, ","> ")"
 
     Primary          = "(" Exp ")"                                       -- parens
                      | "[" NonemptyListOf<Exp, ","> "]"                  -- array

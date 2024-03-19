@@ -126,9 +126,9 @@ export const standardLibrary = {
   // TODO fill this in someday
 }
 
-// export function functionCall(callee, args){
-//     return{kind: "FunctionCall", callee, args, type: callee.type.returnType}
-// }
+export function functionCall(callee, args){
+    return{kind: "FunctionCall", callee, args, type: callee.type.returnType}
+}
 
 String.prototype.type = stringType
 Number.prototype.type = floatType

@@ -173,6 +173,10 @@ export default function analyze(match) {
         return "boolean"
       case "VoidType":
         return "void"
+      case "constType":
+        return "const"
+      case "LetType":
+        return "let"
       case "StructType":
         return type.name
       case "FunctionType":
@@ -248,61 +252,107 @@ export default function analyze(match) {
       return core.program(statements.children.map((s) => s.rep()))
     },
 
-    FuncDecl(_fun, id, parameters, _colons, type, block) {
-      // Start by making the function, but we don't yet know its type.
-      // Also add it to the context so that we can have recursion.
-      const fun = core.fun(id.sourceString)
-      mustNotAlreadyBeDeclared(id.sourceString, { at: id })
-      context.add(id.sourceString, fun)
-
-      // Parameters are part of the child context
-      context = context.newChildContext({ inLoop: false, function: fun })
-      const params = parameters.rep()
-
-      // Now that the parameters are known, we compute the function's type.
-      // This is fine; we did not need the type to analyze the parameters,
-      // but we do need to set it before analyzing the body.
-      const paramTypes = params.map((param) => param.type)
-      const returnType = type.children?.[0]?.rep() ?? VOID
-      fun.type = core.functionType(paramTypes, returnType)
-
-      // Analyze body while still in child context
+    FuncDecl_function_public(_ocean, type, tag, _parenL, params, _parenR, block) {
+      const functionType = core.functionType(params.rep().map((p) => p.type), type.rep())
+      const functionEntity = core.fun(tag.sourceString, functionType)
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      context.add(tag.sourceString, functionEntity)
+      context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
-
-      // Go back up to the outer context before returning
       context = context.parent
-      return core.functionDeclaration(fun, params, body)
+      return core.functionDeclaration(tag.sourceString, functionEntity, params.rep(), body)
     },
 
-    VarDecl_variable_public(_ocean, type, tag, _eq, exp) {},
-    VarDecl_variable_private(_lake, type, tag, _eq, exp) {},
-    VarDecl_type_public(_ocean, type, tag) {},
-    VarDecl_type_private(_lake, type, tag) {},
-
-    Params(paramList) {
-      // Returns a list of variable nodes
-      return paramList.asIteration().children.map((p) => p.rep())
+    FuncDecl_function_private(_ocean, type, tag, _parenL, params, _parenR, block) {
+      const functionType = core.functionType(params.rep().map((p) => p.type), type.rep())
+      const functionEntity = core.fun(tag.sourceString, functionType)
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      context.add(tag.sourceString, functionEntity)
+      context = context.newChildContext({ function: functionEntity })
+      const body = block.rep()
+      context = context.parent
+      return core.functionDeclaration(tag.sourceString, functionEntity, params.rep(), body)
     },
 
-    Param(id, _colon, type) {
-      const param = core.variable(id.sourceString, false, type.rep())
-      mustNotAlreadyBeDeclared(param.name, { at: id })
-      context.add(param.name, param)
-      return param
+    FuncDecl_function_public_no_params(_ocean, type, tag, _parenL,  _parenR, block) {
+      const functionType = core.functionType([], type.rep())
+      const functionEntity = core.fun(tag.sourceString, functionType)
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      context.add(tag.sourceString, functionEntity)
+      context = context.newChildContext({ function: functionEntity })
+      const body = block.rep()
+      context = context.parent
+      return core.functionDeclaration(tag.sourceString, functionEntity, [], body)
     },
 
-    TypeDecl(_struct, id, _left, fields, _right) {
-      // To allow recursion, enter into context without any fields yet
-      const type = core.structType(id.sourceString, [])
-      mustNotAlreadyBeDeclared(id.sourceString, { at: id })
-      context.add(id.sourceString, type)
-      // Now add the types as you parse and analyze. Since we already added
-      // the struct type itself into the context, we can use it in fields.
-      type.fields = fields.children.map((field) => field.rep())
-      mustHaveDistinctFields(type, { at: id })
-      mustNotBeSelfContaining(type, { at: id })
-      return core.typeDeclaration(type)
+    FuncDecl_function_private_no_params(_lake, type, tag, _parenL, _parenR, block) {
+      const functionType = core.functionType([], type.rep())
+      const functionEntity = core.fun(tag.sourceString, functionType)
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      context.add(tag.sourceString, functionEntity)
+      context = context.newChildContext({ function: functionEntity })
+      const body = block.rep()
+      context = context.parent
+      return core.functionDeclaration(tag.sourceString, functionEntity, [], body)
     },
+
+    VarDecl_variable_public(_ocean, type, tag, _eq, exp) {
+      const variable = core.variable(tag.sourceString, false, type.rep())
+      mustNotAlreadyBeDeclared(variable.name, { at: tag })
+      context.add(variable.name, variable)
+      if (exp.sourceString !== "") {
+        const expression = exp.rep()
+        mustBeAssignable(expression, { toType: variable.type }, { at: exp })
+        return core.variableDeclaration(variable, expression)
+      }
+      return core.variableDeclaration(variable, null)
+    },
+    VarDecl_variable_private(_lake, type, tag, _eq, exp) {
+      const variable = core.variable(tag.sourceString, true, type.rep())
+      mustNotAlreadyBeDeclared(variable.name, { at: tag })
+      context.add(variable.name, variable)
+      if (exp.sourceString !== "") {
+        const expression = exp.rep()
+        mustBeAssignable(expression, { toType: variable.type }, { at: exp })
+        return core.variableDeclaration(variable, expression)
+      }
+      return core.variableDeclaration(variable, null)
+    },
+    VarDecl_type_public(_ocean, type, tag) {
+      const variable = core.variable(tag.sourceString, false, type.rep())
+      mustNotAlreadyBeDeclared(variable.name, { at: tag })
+      context.add(variable.name, variable)
+      return core.variableDeclaration(variable, null)
+    },
+    VarDecl_type_private(_lake, type, tag) {
+      const variable = core.variable(tag.sourceString, true, type.rep())
+      mustNotAlreadyBeDeclared(variable.name, { at: tag })
+      context.add(variable.name, variable)
+      return core.variableDeclaration(variable, null)
+    },
+
+    TypeDecl(_boat, tag, braceL, VarDecl, braceR) {
+      const structType = core.structType(tag.sourceString, VarDecl.rep())
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      mustNotBeSelfContaining(structType, { at: tag })
+      context.add(tag.sourceString, structType)
+      return core.typeDeclaration(structType)
+    },
+
+    ClassDecl_class_public(_ocean, school, tag, _colon) {
+      const classType = core.structType(tag.sourceString, [])
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      context.add(tag.sourceString, classType)
+      return classType
+    },
+
+    ClassDecl_class_private(_lake, school, tag, _colon) {
+      const classType = core.structType(tag.sourceString, [])
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      context.add(tag.sourceString, classType)
+      return classType
+    },
+
 
     Type_array(_left, baseType, _right) {
       return core.arrayType(baseType.rep())
@@ -320,15 +370,12 @@ export default function analyze(match) {
       return core.emptyArray(type)
     },
 
-    Field(id, _colon, type) {
-      return core.field(id.sourceString, type.rep())
-    },
-
-    Type_id(id) {
-      const entity = context.lookup(id.sourceString)
-      mustHaveBeenFound(entity, id.sourceString, { at: id })
-      mustBeAType(entity, { at: id })
-      return entity
+    Type_struct(boat, tag ,bracketL, varDecl, bracketR) {
+      const structType = core.structType(tag.sourceString, varDecl.rep())
+      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      mustNotBeSelfContaining(structType, { at: tag })
+      context.add(tag.sourceString, structType)
+      return structType
     },
 
     Statement_assign(variable, _eq, expression, _semicolon) {
@@ -339,32 +386,12 @@ export default function analyze(match) {
       return core.assignment(target, source)
     },
 
-    // Statement_call(call, _semicolon) { //function call
-    //   return call.rep()
-    // },
-
-    //#NEED CLASS DECLARATION, TRY CATCH, AND OTHER VARIABLES IN CHART
-
     PrintStmt(_cast, _colon, exp) {
       const expression = exp.rep()
       return core.printStatement(expression)
     },
 
-    Statement_return(returnKeyword, exp, _semicolon) {
-      mustBeInAFunction({ at: returnKeyword })
-      mustReturnSomething(context.function, { at: returnKeyword })
-      const returnExpression = exp.rep()
-      mustBeReturnable(returnExpression, { from: context.function }, { at: exp })
-      return core.returnStatement(returnExpression)
-    },
-
-    Statement_shortreturn(returnKeyword, _semicolon) {
-      mustBeInAFunction({ at: returnKeyword })
-      mustNotReturnAnything(context.function, { at: returnKeyword })
-      return core.shortReturnStatement()
-    },
-
-    IfStmt_long(_if, exp, block1, _else, block2) {
+    IfStmt_if_else(_if, exp, block1, _else, block2) {
       const test = exp.rep()
       mustHaveBooleanType(test, { at: exp })
       context = context.newChildContext()
@@ -376,7 +403,7 @@ export default function analyze(match) {
       return core.ifStatement(test, consequent, alternate)
     },
 
-    IfStmt_elsif(_if, exp, block, _else, trailingIfStatement) {
+    IfStmt_nested_if(_if, exp, block, _else, trailingIfStatement) {
       const test = exp.rep()
       mustHaveBooleanType(test, { at: exp })
       context = context.newChildContext()
@@ -386,7 +413,7 @@ export default function analyze(match) {
       return core.ifStatement(test, consequent, alternate)
     },
 
-    IfStmt_short(_if, exp, block) {
+    IfStmt_if(_if, exp, block) {
       const test = exp.rep()
       mustHaveBooleanType(test, { at: exp })
       context = context.newChildContext()
@@ -395,7 +422,30 @@ export default function analyze(match) {
       return core.shortIfStatement(test, consequent)
     },
 
-    LoopStmt_while(_while, exp, block) {
+    ForStmt_for_in_range(_stream, tag, _in, exp, parenL, exp1, exp2, parenR, exp, block){
+      const [low, high] = [exp1.rep(), exp2.rep()]
+      mustHaveIntegerType(low, { at: exp1 })
+      mustHaveIntegerType(high, { at: exp2 })
+      const iterator = core.variable(tag.sourceString, INT, true)
+      context = context.newChildContext({ inLoop: true })
+      context.add(tag.sourceString, iterator)
+      const body = block.rep()
+      context = context.parent
+      return core.forRangeStatement(iterator, low, high, body)
+    },
+
+    ForStmt_for_in_collection(_stream, tag, _in, exp, block){
+      const collection = exp.rep()
+      mustHaveAnArrayType(collection, { at: exp })
+      const iterator = core.variable(tag.sourceString, true, collection.type.baseType)
+      context = context.newChildContext({ inLoop: true })
+      context.add(iterator.name, iterator)
+      const body = block.rep()
+      context = context.parent
+      return core.forStatement(iterator, collection, body)
+    },
+
+    WhileStmt_while(_tide, exp, block) {
       const test = exp.rep()
       mustHaveBooleanType(test, { at: exp })
       context = context.newChildContext({ inLoop: true })
@@ -404,37 +454,64 @@ export default function analyze(match) {
       return core.whileStatement(test, body)
     },
 
-    LoopStmt_repeat(_repeat, exp, block) {
-      const count = exp.rep()
-      mustHaveIntegerType(count, { at: exp })
-      context = context.newChildContext({ inLoop: true })
-      const body = block.rep()
-      context = context.parent
-      return core.repeatStatement(count, body)
+    ReturnStmt_return(_reel, exp) {
+      const expression = exp.rep()
+      const f = context.function
+      mustBeInAFunction({ at: _reel })
+      mustBeReturnable(expression, { from: f }, { at: _reel })
+      return core.returnStatement(expression)
     },
 
-    LoopStmt_range(_for, id, _in, exp1, op, exp2, block) {
-      const [low, high] = [exp1.rep(), exp2.rep()]
-      mustHaveIntegerType(low, { at: exp1 })
-      mustHaveIntegerType(high, { at: exp2 })
-      const iterator = core.variable(id.sourceString, INT, true)
-      context = context.newChildContext({ inLoop: true })
-      context.add(id.sourceString, iterator)
-      const body = block.rep()
-      context = context.parent
-      return core.forRangeStatement(iterator, low, op.sourceString, high, body)
+    BreakStmt_break(_snap){
+      mustBeInLoop({ at: _snap })
+      return core.breakStatement()
     },
 
-    // LoopStmt_collection(_for, id, _in, exp, block) {
-    //   const collection = exp.rep()
-    //   mustHaveAnArrayType(collection, { at: exp })
-    //   const iterator = core.variable(id.sourceString, true, collection.type.baseType)
-    //   context = context.newChildContext({ inLoop: true })
-    //   context.add(iterator.name, iterator)
-    //   const body = block.rep()
-    //   context = context.parent
-    //   return core.forStatement(iterator, collection, body)
-    // },
+    ContinueStmt_continue(_flow){
+      mustBeInLoop({ at: _flow })
+      return core.breakStatement()
+    },
+
+    TryStmt(_pitch, block, _catch){
+      const body = block.rep()
+      return core.tryStatement(body)
+    },
+
+    Catch(_catch, parenL, tag, parenR, block){
+      const body = block.rep()
+      return core.catchStatement(tag.sourceString, body)
+    },
+
+    Field(id, _colon, type) {
+      return core.field(id.sourceString, type.rep())
+    },
+
+    Type_id(id) {
+      const entity = context.lookup(id.sourceString)
+      mustHaveBeenFound(entity, id.sourceString, { at: id })
+      mustBeAType(entity, { at: id })
+      return entity
+    },
+
+
+    FuncCall(tag, parenL, expList, parenR) {
+      const callee = tag.rep()
+      mustBeCallable(callee, { at: tag })
+      const exps = expList.asIteration().children
+      const targetTypes =
+        callee?.kind === "StructType"
+          ? callee.fields.map(f => f.type)
+          : callee.type.paramTypes
+      mustHaveCorrectArgumentCount(exps.length, targetTypes.length, { at: parenL })
+      const args = exps.map((exp, i) => {
+        const arg = exp.rep()
+        mustBeAssignable(arg, { toType: targetTypes[i] }, { at: exp })
+        return arg
+      })
+      return callee?.kind === "StructType"
+        ? core.constructorCall(callee, args)
+        : core.functionCall(callee, args)
+    },
 
     Block(_open, statements, _close) {
       // No need for a block node, just return the list of statements
@@ -503,52 +580,19 @@ export default function analyze(match) {
       return expression.rep()
     },
 
-    // Exp9_member(exp, dot, id) {
-    //   const object = exp.rep()
-    //   let structType
-    //   if (dot.sourceString === "?.") {
-    //     mustHaveAnOptionalStructType(object, { at: exp })
-    //     structType = object.type.baseType
-    //   } else {
-    //     mustHaveAStructType(object, { at: exp })
-    //     structType = object.type
-    //   }
-    //   mustHaveMember(structType, id.sourceString, { at: id })
-    //   const field = structType.fields.find(f => f.name === id.sourceString)
-    //   return core.memberExpression(object, dot.sourceString, field)
-    // },
-
-    //  Exp9_call(exp, open, expList, _close) {
-    //   const callee = exp.rep()
-    //   mustBeCallable(callee, { at: exp })
-    //   const exps = expList.asIteration().children
-    //   const targetTypes =
-    //     callee?.kind === "StructType"
-    //       ? callee.fields.map(f => f.type)
-    //       : callee.type.paramTypes
-    //   mustHaveCorrectArgumentCount(exps.length, targetTypes.length, { at: open })
-    //   const args = exps.map((exp, i) => {
-    //     const arg = exp.rep()
-    //     mustBeAssignable(arg, { toType: targetTypes[i] }, { at: exp })
-    //     return arg
-    //   })
-    //   return callee?.kind === "StructType"
-    //     ? core.constructorCall(callee, args)
-    //     : core.functionCall(callee, args)
-    // },
-    Id(id) {
+    Id(tag) {
       // When an id appears in an expression, it had better have been declared
-      const entity = context.lookup(id.sourceString)
-      mustHaveBeenFound(entity, id.sourceString, { at: id })
+      const entity = context.lookup(tag.sourceString)
+      mustHaveBeenFound(entity, tag.sourceString, { at: tag })
       return entity
     },
 
-    true(_) {
-      return true
+    true(_hooked) {
+      return _hooked
     },
 
-    false(_) {
-      return false
+    false(_unhooked) {
+      return _unhooked
     },
 
     intlit(_digits) {
