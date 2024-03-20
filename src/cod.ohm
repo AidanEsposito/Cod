@@ -12,9 +12,8 @@ Cod{
                   |  ContinStmt
                   |  TryStmt
                   |  PrintStmt
-                
-                
-                
+                  |  IncDecStmt
+                      
     VarDecl  = ocean? Type tag "=" Exp         --variable_public
                    | lake? Type  tag "=" Exp   --variable_private
                    | ocean? Type tag           --type_public
@@ -47,6 +46,12 @@ Cod{
     Block       	 = "{" Stmt* "}"                                      --block
 
 	 PrintStmt 	    = cast ":" Exp
+
+   IncDecStmt     = IncStmt | DecStmt
+
+   IncStmt        = tag "++"
+   DecStmt        = tag "--"
+   
     IfStmt      	 = if Exp Block else Block                           --if_else
                         | if Exp Block else IfStmt                          --nested_if
                         | if Exp Block                                      -- if     

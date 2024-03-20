@@ -114,6 +114,10 @@ export function printStatement(args) {
   return { kind: "printStatement", args }
 }
 
+export function IncDecStatement(op, operand) {
+  return { kind: "IncDecStatement", op, operand }
+}
+
 export function binary(op, left, right, type) {
   return { kind: "BinaryExpression", op, left, right, type }
 }

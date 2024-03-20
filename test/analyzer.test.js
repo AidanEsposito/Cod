@@ -4,44 +4,49 @@ import analyze from "../src/analyzer.js"
 import { program, variableDeclaration, variable, binary, floatType } from "../src/core.js"
 
 // Programs that are semantically correct
-// const semanticChecks = [
-//   ["variable declarations", 'const x = 1; let y = "false";'],
+const semanticChecks = [
+    ["variable declarations", 'docked x = 1 land y = uhooked'],
 //   ["complex array types", "function f(x: [[[int?]]?]) {}"],
-//   ["increment and decrement", "let x = 10; x--; x++;"],
+    ["increment and decrement", "land x = 10 x-- x++"],
+    ["increment and decrement", "land x = 10; x--; x++;"],
 //   ["initialize with empty array", "let a = [int]();"],
 //   ["type declaration", "struct S {f: (int)->boolean? g: string}"],
+     ["Struct decl", "boat S {f: (int) ->boolean? g: string}"],
 //   ["assign arrays", "let a = [int]();let b=[1];a=b;b=a;"],
 //   ["assign to array element", "const a = [1,2,3]; a[1]=100;"],
 //   ["initialize with empty optional", "let a = no int;"],
 //   ["short return", "function f() { return; }"],
 //   ["long return", "function f(): boolean { return true; }"],
 //   ["assign optionals", "let a = no int;let b=some 1;a=b;b=a;"],
+
+//FIX RETURN IN OHM!
+
 //   ["return in nested if", "function f() {if true {return;}}"],
 //   ["break in nested if", "while false {if true {break;}}"],
-//   ["long if", "if true {print(1);} else {print(3);}"],
-//   ["elsif", "if true {print(1);} else if true {print(0);} else {print(3);}"],
+     ["long if", "if hooked { cast: 1} else {cast: 3}"],
+     ["elsif", "if hooked {cast: 1} else if hooked { cast: 0} else {cast: 3}"],
 //   ["for over collection", "for i in [2,3,5] {print(1);}"],
-//   ["for in range", "for i in 1..<10 {print(0);}"],
+     ["for in range", "stream i in x < 10{ cast: 0 }"],
 //   ["repeat", "repeat 3 {let a = 1; print(a);}"],
 //   ["conditionals with ints", "print(true ? 8 : 5);"],
 //   ["conditionals with floats", "print(1<2 ? 8.0 : -5.22);"],
 //   ["conditionals with strings", 'print(1<2 ? "x" : "y");'],
 //   ["??", "print(some 5 ?? 0);"],
 //   ["nested ??", "print(some 5 ?? 8 ?? 0);"],
-//   ["||", "print(true||1<2||false||!true);"],
-//   ["&&", "print(true&&1<2&&false&&!true);"],
+     ["||", "cast: hooked || unhooked || 1 || hello"],
+     ["&&", "cast: (hooked && 1< 2 && unhooked &&!hooked)"],
 //   ["bit ops", "print((1&2)|(9^3));"],
 //   ["relations", 'print(1<=2 && "x">"y" && 3.5<1.2);'],
 //   ["ok to == arrays", "print([1]==[5,8]);"],
 //   ["ok to != arrays", "print([1]!=[5,8]);"],
 //   ["shifts", "print(1<<3<<5<<8>>2>>0);"],
-//   ["arithmetic", "let x=1;print(2*3+5**-3/2-5%8);"],
+     ["arithmetic", "land x = 1 cast: (2*3+5**-3/2-5%8)"],
 //   ["array length", "print(#[1,2,3]);"],
 //   ["optional types", "let x = no int; x = some 100;"],
 //   ["random with array literals, ints", "print(random [1,2,3]);"],
 //   ["random with array literals, strings", 'print(random ["a", "b"]);'],
 //   ["random on array variables", "let a=[true, false];print(random a);"],
-//   ["variables", "let x=[[[[1]]]]; print(x[0][0][0][0]+2);"],
+     ["variables", "land x = [[[[1]]]] cast: x + 2"],
 //   ["pseudo recursive struct", "struct S {z: S?} let x = S(no S);"],
 //   ["nested structs", "struct T{y:int} struct S{z: T} let x=S(T(1)); print(x.z.y);"],
 //   ["member exp", "struct S {x: int} let y = S(1);print(y.x);"],
@@ -49,7 +54,7 @@ import { program, variableDeclaration, variable, binary, floatType } from "../sr
 //   ["subscript exp", "let a=[1,2];print(a[0]);"],
 //   ["array of struct", "struct S{} let x=[S(), S()];"],
 //   ["struct of arrays and opts", "struct S{x: [int] y: string??}"],
-//   ["assigned functions", "function f() {}\nlet g = f;g = f;"],
+     ["assigned functions", "ocean int f(){ let g = f let f = g}"],
 //   ["call of assigned functions", "function f(x: int) {}\nlet g=f;g(1);"],
 //   ["type equivalence of nested arrays", "function f(x: [[int]]) {} print(f([[1],[2]]));"],
 //   [
@@ -77,15 +82,11 @@ import { program, variableDeclaration, variable, binary, floatType } from "../sr
 //   ["empty optional types", "print(no [int]); print(no string);"],
 //   ["types in function type", "function f(g: (int?, float)->string) {}"],
 //   ["voids in fn type", "function f(g: (void)->void) {}"],
-//   ["outer variable", "let x=1; while(false) {print(x);}"],
-//   ["built-in constants", "print(25.0 * π);"],
-//   ["built-in sin", "print(sin(π));"],
-//   ["built-in cos", "print(cos(93.999));"],
-//   ["built-in hypot", "print(hypot(-4.0, 3.00001));"],
-// ]
+     ["outer variable", "land x = 1 tide unhooked { cast: x }"],
+]
 
 // // Programs that are syntactically correct but have semantic errors
-// const semanticErrors = [
+const semanticErrors = [
 //   ["non-distinct fields", "struct S {x: boolean x: int}", /Fields must be distinct/],
 //   ["non-int increment", "let x=false;x++;", /an integer/],
 //   ["non-int decrement", 'let x=some[""];x++;', /an integer/],
@@ -109,8 +110,9 @@ import { program, variableDeclaration, variable, binary, floatType } from "../sr
 //     /Cannot return a value/,
 //   ],
 //   ["return nothing from non-void", "function f(): int {return;}", /should be returned/],
+     ["classes can't be made inside of functions", "ocean int x(){ ocean school tag: cast: x }", /Classes can't be made inside of functions/],
 //   ["return type mismatch", "function f(): int {return false;}", /boolean to a int/],
-//   ["non-boolean short if test", "if 1 {}", /Expected a boolean/],
+     ["non-boolean short if test", "if 1 {}", /Expected hooked or unhooked (a boolean)/],
 //   ["non-boolean if test", "if 1 {} else {}", /Expected a boolean/],
 //   ["non-boolean while test", "while 1 {}", /Expected a boolean/],
 //   ["non-integer repeat", 'repeat "1" {}', /Expected an integer/],
@@ -176,28 +178,28 @@ import { program, variableDeclaration, variable, binary, floatType } from "../sr
 //   ["Non-type in param", "let x=1;function f(y:x){}", /Type expected/],
 //   ["Non-type in return type", "let x=1;function f():x{return 1;}", /Type expected/],
 //   ["Non-type in field type", "let x=1;struct S {y:x}", /Type expected/],
-// ]
+]
 
-// describe("The analyzer", () => {
-//   for (const [scenario, source] of semanticChecks) {
-//     it(`recognizes ${scenario}`, () => {
-//       assert.ok(analyze(parse(source)))
-//     })
-//   }
-//   for (const [scenario, source, errorMessagePattern] of semanticErrors) {
-//     it(`throws on ${scenario}`, () => {
-//       assert.throws(() => analyze(parse(source)), errorMessagePattern)
-//     })
-//   }
-//   it("produces the expected representation for a trivial program", () => {
-//     assert.deepEqual(
-//       analyze(parse("let x = π + 2.2;")),
-//       program([
-//         variableDeclaration(
-//           variable("x", false, floatType),
-//           binary("+", variable("π", true, floatType), 2.2, floatType)
-//         ),
-//       ])
-//     )
-//   })
-// })
+describe("The analyzer", () => {
+  for (const [scenario, source] of semanticChecks) {
+    it(`recognizes ${scenario}`, () => {
+      assert.ok(analyze(parse(source)))
+    })
+  }
+  for (const [scenario, source, errorMessagePattern] of semanticErrors) {
+    it(`throws on ${scenario}`, () => {
+      assert.throws(() => analyze(parse(source)), errorMessagePattern)
+    })
+  }
+  it("produces the expected representation for a trivial program", () => {
+    assert.deepEqual(
+      analyze(parse("let x = π + 2.2;")),
+      program([
+        variableDeclaration(
+          variable("x", false, floatType),
+          binary("+", variable("π", true, floatType), 2.2, floatType)
+        ),
+      ])
+    )
+  })
+})

@@ -331,7 +331,7 @@ export default function analyze(match) {
       return core.variableDeclaration(variable, null)
     },
 
-    TypeDecl(_boat, tag, braceL, VarDecl, braceR) {
+    TypeDecl(_boat, tag, _braceL, VarDecl, _braceR) {
       const structType = core.structType(tag.sourceString, VarDecl.rep())
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       mustNotBeSelfContaining(structType, { at: tag })
@@ -370,7 +370,7 @@ export default function analyze(match) {
       return core.emptyArray(type)
     },
 
-    Type_struct(boat, tag ,bracketL, varDecl, bracketR) {
+    Type_struct(boat, tag , _bracketL, varDecl, _bracketR) {
       const structType = core.structType(tag.sourceString, varDecl.rep())
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       mustNotBeSelfContaining(structType, { at: tag })
@@ -384,6 +384,10 @@ export default function analyze(match) {
       mustBeAssignable(source, { toType: target.type }, { at: variable })
       mustNotBeReadOnly(target, { at: variable })
       return core.assignment(target, source)
+    },
+
+    Block_block(_bracketL, statement, _bracketR) {
+      return statement.rep()
     },
 
     PrintStmt(_cast, _colon, exp) {
@@ -422,7 +426,7 @@ export default function analyze(match) {
       return core.shortIfStatement(test, consequent)
     },
 
-    ForStmt_for_in_range(_stream, tag, _in, exp, parenL, exp1, exp2, parenR, exp, block){
+    ForStmt_for_in_range(_stream, tag, _in,  _parenL, exp1, exp2, _parenR, exp, block){
       const [low, high] = [exp1.rep(), exp2.rep()]
       mustHaveIntegerType(low, { at: exp1 })
       mustHaveIntegerType(high, { at: exp2 })
@@ -462,6 +466,12 @@ export default function analyze(match) {
       return core.returnStatement(expression)
     },
 
+    IncDecStmt(tag, _inc, _dec) {
+      const variable = tag.rep()
+      mustHaveNumericType(variable, { at: tag })
+      return core.incDecStatement(variable)
+    },
+
     BreakStmt_break(_snap){
       mustBeInLoop({ at: _snap })
       return core.breakStatement()
@@ -477,7 +487,7 @@ export default function analyze(match) {
       return core.tryStatement(body)
     },
 
-    Catch(_catch, parenL, tag, parenR, block){
+    Catch(_catch, _parenL, tag, _parenR, block){
       const body = block.rep()
       return core.catchStatement(tag.sourceString, body)
     },
@@ -494,7 +504,7 @@ export default function analyze(match) {
     },
 
 
-    FuncCall(tag, parenL, expList, parenR) {
+    FuncCall(tag, _parenL, expList, _parenR) {
       const callee = tag.rep()
       mustBeCallable(callee, { at: tag })
       const exps = expList.asIteration().children
@@ -511,11 +521,6 @@ export default function analyze(match) {
       return callee?.kind === "StructType"
         ? core.constructorCall(callee, args)
         : core.functionCall(callee, args)
-    },
-
-    Block(_open, statements, _close) {
-      // No need for a block node, just return the list of statements
-      return statements.children.map((s) => s.rep())
     },
 
     Unwrap_else(exp1, elseOp, exp2) {
@@ -580,18 +585,29 @@ export default function analyze(match) {
       return expression.rep()
     },
 
-    Id(tag) {
+    Params(expList) {
+      return expList.asIteration().children.map((e) => e.rep())
+    },
+
+    Param(tag, _colon, type) {
+      const variable = core.variable(tag.sourceString, false, type.rep())
+      mustNotAlreadyBeDeclared(variable.name, { at: tag })
+      context.add(variable.name, variable)
+      return variable
+    },
+
+    id(tag) {
       // When an id appears in an expression, it had better have been declared
       const entity = context.lookup(tag.sourceString)
       mustHaveBeenFound(entity, tag.sourceString, { at: tag })
       return entity
     },
 
-    true(_hooked) {
+    hooked(_hooked) { //true
       return _hooked
     },
 
-    false(_unhooked) {
+    unhooked(_unhooked) { //false
       return _unhooked
     },
 
@@ -611,3 +627,4 @@ export default function analyze(match) {
 }
 
 //STILL NEEDS: CLASSES, CONTINUE STATEMENT, TRY CATCH, PRINTSTMT, TYPES?, and GENERAL BUG CLEANING/FIXES
+
