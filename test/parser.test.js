@@ -5,7 +5,7 @@ const syntaxChecks = [
   ["all numeric literal forms", "cast:(8 * 89.123)"],
   ["all unary operators", "cast: (-3) cast: (!false)"],
   ["all binary operators", "cast: x && y || z * 1 / 2 ** 3 + 4 < 5"],
-  ["all arithmetic operators", "int x = (!3) * 2 + 4 - (-7.3) * 8 ** 13 / 1"],
+  ["all arithmetic operators", "int x = (!hooked) * 2 + 4 - (-7.3) * 8 ** 13 / 1"],
   ["digits work with fraction and exponents", "float number = 3.33E33"],
   ["all relational operators", "int x = 1<(2<=(3==(4!=(5 >= (6>7)))))"],
   ["all logical operators", "int x = hooked && unhooked || (!unhooked)"],

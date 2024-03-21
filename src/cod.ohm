@@ -9,20 +9,20 @@ Cod{
                   |  WhileStmt
                   |  ReturnStmt
                   |  BreakStmt
-                  |  ContinStmt
+                  |  ContinueStmt
                   |  TryStmt
                   |  PrintStmt
                   |  IncDecStmt
                       
-    VarDecl  = ocean? Type tag "=" Exp         --variable_public
-                   | lake? Type  tag "=" Exp   --variable_private
-                   | ocean? Type tag           --type_public
-                   | lake? Type tag            --type_private
+    VarDecl       = ocean? Type tag "=" Exp   --variable_public
+                  | lake? Type  tag "=" Exp   --variable_private
+                  | ocean? Type tag           --type_public
+                  | lake? Type tag            --type_private
                    
 
-    TypeDecl       = boat tag "{" VarDecl* "}"
+    TypeDecl      = boat tag "{" VarDecl* "}"
 
-     FuncDecl      = ocean? Type tag "(" Params ")" Block           --function_public
+     FuncDecl     = ocean? Type tag "(" Params ")" Block           --function_public
                		| lake? Type tag "(" Params ")" Block              --function_private
                   | ocean? Type tag "("")" Block               		  --function_public_no_params
                   | lake? Type tag "("")" Block               			--function_private_no_params
@@ -35,15 +35,14 @@ Cod{
     Type        	 = Type "[" "]"                                       -- array
                         | tag                                                 -- id
                         | lost                                              -- void     
-                        | int												--int
-                        | float												--float
+                        | int
+                        | float
                         | string
                         | land
-                        | docked
                         | boolean
                         | StructDecl
         
-    Block       	 = "{" Stmt* "}"                                      --block
+    Block       	 = "{" Stmt* "}"
 
 	 PrintStmt 	    = cast ":" Exp
 
@@ -65,7 +64,7 @@ Cod{
 
     BreakStmt      = snap                                             -- break
 
-    ContinStmt     = flow                                        -- continue
+    ContinueStmt     = flow                                        -- continue
 
     TryStmt        = pitch Block Catch* //possibly add finally
     Catch          = catch "(" tag* ")" Block
@@ -98,60 +97,60 @@ Cod{
     Primary          = "(" Exp ")"                                       -- parens
                      | "[" NonemptyListOf<Exp, ","> "]"                  -- array
                      | tag                                               --id
-                     | fish                                              --num
-                     | sock                                              --null                 
+                     | ("-" | "!")? Primary                     --unary
+                     | sock                                     --null                 
                      | hooked                                              --true
                      | unhooked                                             --false
+                     | fish
                      | stringlit                                        			 --string
                      
 
     relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!=" 
 
-    land         	 = "land" ~idchar       --let
-    docked        = "docked" ~idchar      --const
-    int 			   = "int" ~idchar 			--int
-    float 			  = "float" ~idchar			--float
-    string			 = "string" ~idchar      --string
-    boolean 	  = "boolean" ~idchar --boolean
-    boat      	     = "boat" ~idchar       --struct
-    function    	 = "function" ~idchar   --function   
-    if         	     = "if" ~idchar         --if
-    else       	     = "else" ~idchar       --else
-    stream           = "stream" ~idchar     --for
-    snap      	     = "snap"   ~idchar     --break
-    flow             = "flow" ~idchar       --continue
-    pitch            = "pitch" ~idchar      --try
-    recast      	 = "recast" ~idchar     --repeat
-    throw       	 = "throw" ~idchar      --throw
-    reel      	     = "reel" ~idchar       --return
-    tacklebox        = "tacklebox" ~idchar       --case
-    catch       	 = "catch" ~idchar      --catch
-    school       	 = "school" ~idchar     --class   
-    ocean      	     = "ocean" ~idchar      --public
-    lake             = "lake" ~idchar       --private
-    lost         	 = "lost" ~idchar       --void
-    in               = "in" ~idchar         --in
-    tide        	 = "tide" ~idchar        --while
-    cast             = "cast" ~idchar        --print
-    sock 			 = "sock" ~idchar        --null
-  	hooked 	     = "!"? "hooked" ~idchar     --true
-  	unhooked 		 = "!"? "unhooked" ~idchar   --False
+    land         	 = "land" ~idchar
+    int 			   = "int" ~idchar
+    float 			  = "float" ~idchar
+    string			 = "string" ~idchar
+    boolean 	  = "boolean" ~idchar
+    boat      	     = "boat" ~idchar
+    function    	 = "function" ~idchar
+    if         	     = "if" ~idchar
+    else       	     = "else" ~idchar
+    stream           = "stream" ~idchar
+    snap      	     = "snap"   ~idchar
+    flow             = "flow" ~idchar
+    pitch            = "pitch" ~idchar
+    recast      	 = "recast" ~idchar
+    throw       	 = "throw" ~idchar
+    reel      	     = "reel" ~idchar
+    tacklebox        = "tacklebox" ~idchar
+    catch       	 = "catch" ~idchar
+    school       	 = "school" ~idchar
+    ocean      	     = "ocean" ~idchar
+    lake             = "lake" ~idchar
+    lost         	 = "lost" ~idchar
+    in          = "in" ~idchar
+    tide        = "tide" ~idchar
+    cast        = "cast" ~idchar
+    sock        = "sock" ~idchar
+  	hooked      = "hooked" ~idchar
+  	unhooked    = "unhooked" ~idchar
     
 
-    keyword        = land | docked | boat | function
-                   | if | else | reel | snap | flow | int | float | string
-               	   | pitch | recast | throw | stream | tacklebox
-                   | catch | school | ocean | lake | lost | in
-                   | tide | cast | sock | hooked | unhooked | boolean
+    keyword    = land | boat | function
+               | if | else | reel | snap | flow | int | float | string
+               | pitch | recast | throw | stream | tacklebox
+               | catch | school | ocean | lake | lost | in
+               | tide | cast | sock | hooked | unhooked | boolean
     
-    tag  			= ~keyword "!"? letter idchar*
-    idchar 			= alnum | "_"
-    fish 			= "-"? "!"? digit+ ("." digit+)? (("e" | "E") ("+" | "-")? digit+)?
+    tag        = ~keyword "!"? letter idchar*
+    idchar     = alnum | "_"
+    fish       = digit+ ("." digit+)? (("e" | "E") ("+" | "-")? digit+)?
     
-    stringlit 		= "\"" char* "\""
-  	 char 			   = "\\u{" hexDigit+ "}"   									--codepoint
-       				| "\\" any               									--nonbackslash
-       				| ~"\"" any
+    stringlit  = "\"" char* "\""
+    char       = "\\u{" hexDigit+ "}"   									--codepoint
+               | "\\" any               									--nonbackslash
+               | ~"\"" any
 
-    space    		+= "//" (~"\n" any)*                                      --comment
+    space    	+= "//" (~"\n" any)*                                      --comment
  }
