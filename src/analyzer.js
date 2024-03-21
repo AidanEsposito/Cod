@@ -380,6 +380,47 @@ export default function analyze(match) {
       return core.binary("||", leftOperand, rightOperand, BOOLEAN)
     },
 
+    Exp1_and(left, _and, right) {
+      const [leftOperand, rightOperand] = [left.rep(), right.rep()]
+      mustHaveBooleanType(leftOperand, { at: left })
+      mustHaveBooleanType(rightOperand, { at: right })
+      return core.binary("&&", leftOperand, rightOperand, BOOLEAN)
+    },
+
+    Exp2_relational_operator(left, relop, right) {
+      const [leftOperand, op, rightOperand] = [left.rep(), relop.sourceString, right.rep()]
+      mustHaveNumericOrStringType(leftOperand, { at: left })
+      mustHaveNumericOrStringType(rightOperand, { at: right })
+      return core.binary(op, leftOperand, rightOperand, BOOLEAN)
+    },
+
+    Exp3_add_subtract(left, addOp, subOp, right) {
+      const [leftOperand, op, rightOperand] = [left.rep(), addOp.sourceString, right.rep()]
+      if (op === "+") {
+        mustHaveNumericOrStringType(leftOperand, { at: left })
+      } else {
+        mustHaveNumericType(leftOperand, { at: left })
+      }
+      mustBothHaveTheSameType(leftOperand, rightOperand, { at: addOp })
+      return core.binary(op, leftOperand, rightOperand, leftOperand.type)
+    },
+
+    Term_multi_divide_modulo(left, mulOp, divOp, modOp, right) {
+      const [leftOperand, op, rightOperand] = [left.rep(), mulOp.sourceString, right.rep()]
+      mustHaveNumericType(leftOperand, { at: left })
+      mustBothHaveTheSameType(leftOperand, rightOperand, { at: mulOp })
+      return core.binary(op, leftOperand, rightOperand, leftOperand.type)
+    },
+
+    Factor_exponent(primary, _exp, exponent) {
+      const [base, exp] = [primary.rep(), exponent.rep()]
+      mustHaveNumericType(base, { at: primary })
+      mustHaveNumericType(exp, { at: exponent })
+      return core.binary("**", base, exp, base.type)
+    },
+
+
+
     // Array_exp(_open, args, _close) {
     //   const elements = args.asIteration().children.map((e) => e.rep())
     //   mustAllHaveSameType(elements, { at: args })
@@ -612,7 +653,7 @@ export default function analyze(match) {
       return expList.asIteration().children.map((e) => e.rep())
     },
 
-    Param(tag, _colon, type) {
+    Param(type, tag) {
       const variable = core.variable(tag.sourceString, false, type.rep())
       mustNotAlreadyBeDeclared(variable.name, { at: tag })
       context.add(variable.name, variable)

@@ -60,7 +60,7 @@ Cod{
 
     WhileStmt      = tide Exp Block                                   -- while    
 
-    ReturnStmt     = reel Exp                                        -- return
+    ReturnStmt     = reel Exp?                                        -- return
 
     BreakStmt      = snap                                             -- break
 
@@ -70,7 +70,7 @@ Cod{
     Catch          = catch "(" tag* ")" Block
 
     Params         = ListOf<Param, ","> 
-    Param          = tag ":" Type 
+    Param          = Type tag
     
    
     Exp         	 = Exp "||" Exp1                                     -- or
@@ -107,34 +107,34 @@ Cod{
 
     relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!=" 
 
-    land         	 = "land" ~idchar
-    int 			   = "int" ~idchar
-    float 			  = "float" ~idchar
-    string			 = "string" ~idchar
-    boolean 	  = "boolean" ~idchar
-    boat      	     = "boat" ~idchar
-    function    	 = "function" ~idchar
-    if         	     = "if" ~idchar
-    else       	     = "else" ~idchar
-    stream           = "stream" ~idchar
-    snap      	     = "snap"   ~idchar
-    flow             = "flow" ~idchar
-    pitch            = "pitch" ~idchar
-    recast      	 = "recast" ~idchar
-    throw       	 = "throw" ~idchar
-    reel      	     = "reel" ~idchar
-    tacklebox        = "tacklebox" ~idchar
-    catch       	 = "catch" ~idchar
-    school       	 = "school" ~idchar
-    ocean      	     = "ocean" ~idchar
-    lake             = "lake" ~idchar
-    lost         	 = "lost" ~idchar
-    in          = "in" ~idchar
-    tide        = "tide" ~idchar
-    cast        = "cast" ~idchar
-    sock        = "sock" ~idchar
-  	hooked      = "hooked" ~idchar
-  	unhooked    = "unhooked" ~idchar
+    land         	 = "land" ~idchar       //let
+    int 			   = "int" ~idchar          //int
+    float 			  = "float" ~idchar       //float
+    string			 = "string" ~idchar       //string
+    boolean 	  = "boolean" ~idchar       //boolean
+    boat      	     = "boat" ~idchar     //struct
+    function    	 = "function" ~idchar   //function
+    if         	     = "if" ~idchar       //if
+    else       	     = "else" ~idchar     //else
+    stream           = "stream" ~idchar   //for
+    snap      	     = "snap"   ~idchar   //break
+    flow             = "flow" ~idchar     //continue
+    pitch            = "pitch" ~idchar    //try
+    recast      	 = "recast" ~idchar     //repeat
+    throw       	 = "throw" ~idchar      //throw
+    reel      	     = "reel" ~idchar     //return
+    tacklebox        = "tacklebox" ~idchar //case
+    catch       	 = "catch" ~idchar      //catch
+    school       	 = "school" ~idchar     //class
+    ocean      	     = "ocean" ~idchar    //public
+    lake             = "lake" ~idchar     //private
+    lost         	 = "lost" ~idchar       //void
+    in          = "in" ~idchar            //in
+    tide        = "tide" ~idchar          //while
+    cast        = "cast" ~idchar          //print 
+    sock        = "sock" ~idchar          //null
+  	hooked      = "hooked" ~idchar        //true
+  	unhooked    = "unhooked" ~idchar      //false
     
 
     keyword    = land | boat | function
