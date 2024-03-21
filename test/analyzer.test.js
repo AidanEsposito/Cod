@@ -25,8 +25,10 @@ const semanticChecks = [
 
   ["return in nested if", "boolean f(){ if hooked{ reel}}"],
   ["break in nested if", "tide unhooked{ if hooked{ snap}} "],
+  ["short if", "if hooked { cast: 1}"],
   ["long if", "if hooked { cast: 1} else {cast: 3}"],
   ["elsif", "if hooked {cast: 1} else if hooked { cast: 0} else {cast: 3}"],
+
   ["for in range", "stream i in x < 10{ cast: 0 }"],
   ["while", "tide hooked{ cast: 1} "],
   //   ["conditionals with ints", "print(true ? 8 : 5);"],
@@ -37,7 +39,7 @@ const semanticChecks = [
   ["||", "cast: hooked || unhooked || 1 || hello"],
   ["&&", "cast: (hooked && 1< 2 && unhooked &&!hooked)"],
   //   ["bit ops", "print((1&2)|(9^3));"],
-  //   ["relations", 'print(1<=2 && "x">"y" && 3.5<1.2);'],
+  ["relations", 'cast:  1<= 2 && "x"> "y" &&  3.5 <1.2'],
   //   ["ok to == arrays", "print([1]==[5,8]);"],
   //   ["ok to != arrays", "print([1]!=[5,8]);"],
   //   ["shifts", "print(1<<3<<5<<8>>2>>0);"],
@@ -88,31 +90,39 @@ const semanticChecks = [
 
 // // Programs that are syntactically correct but have semantic errors
 const semanticErrors = [
-  //   ["non-distinct fields", "struct S {x: boolean x: int}", /Fields must be distinct/],
-["non-int increment", "boolean x = unhooked x++", /an integer/],
-["non-int decrement", 'land x = true x++', /an integer/],
-["undeclared id", "cast: x", /Identifier x not declared/],
-["redeclared id", "land x = 1 land x = 1", /Identifier x already declared/],
-  //   ["assign bad type", "let x=1;x=true;", /Cannot assign a boolean to a int/],
-  //   ["assign bad array type", "let x=1;x=[true];", /Cannot assign a \[boolean\] to a int/],
-["break outside loop", "snap", /Break can only appear in a loop/],
-  //   [
-  //     "break inside function",
-  //     "while true {function f() {break;}}",
-  //     /Break can only appear in a loop/,
-  //   ],
-["return outside function", "reel", /Return can only appear in a function/],
-  //   [
-  //     "return value from void function",
-  //     "function f() {return 1;}",
-  //     /Cannot return a value/,
-  //   ],
-  //   ["return nothing from non-void", "function f(): int {return;}", /should be returned/],
+  ["non-distinct fields", "int hello(int x, boolean x){}", /Fields must be distinct/],
+  ["non-int increment", "boolean x = unhooked x++", /Expected an integer/],
+  ["non-int decrement", 'land x = hooked x--', /Expected an integer/],
+  ["undeclared id", "cast: x", /Identifier x not declared/],
+  ["redeclared id", "land x = 1 land x = 1", /Identifier x already declared/],
+    //   ["assign bad type", "let x=1;x=true;", /Cannot assign a boolean to a int/],
+  ["break outside loop", "snap", /Break can only appear in a loop/],
+  ["continue outside loop", "flow", /Continue can only appear in a loop/],
+  [
+        "break inside function",
+        "tide hooked{ boolean f(){ snap}}",
+        /Break can only appear in a loop/,
+  ],
+  ["return outside function", "reel", /Return can only appear in a function/],
+
+  [
+    "return value from void function",
+    "lost hello(){ reel 1}",
+    /Cannot return a value/,
+  ],
+
+  ["return nothing from non-void", "int f(){ return }", /should be returned/], //possibly fails syntax checks beforehand
   [
     "classes can't be made inside of functions",
     "ocean int x(){ ocean school tag: cast: x }",
     /Classes can't be made inside of functions/,
   ],
+  [
+    "public classes can't be made inside of private classes", 
+    "lake school x: ocean school y: cast: x", 
+    /Public classes can't be made in Private classes/,
+  ],
+
   ["return type mismatch", " int test() { reel unhooked }", /boolean to a int/],
   ["non-boolean short if test", "if 1 {}", /Expected hooked or unhooked (a boolean)/],
   ["non-boolean if test", " if 1 {} else {}", /Expected a boolean/],
@@ -134,14 +144,18 @@ const semanticErrors = [
   ["bad types for ==", "cast: unhooked == 1", /not have the same type/],
   ["bad types for !=", "cast: unhooked != 1", /not have the same type/],
   ["bad types for negation", "cast: -hooked", /Expected a number/],
-  //   ["bad types for length", "print(#false);", /Expected an array/],
   ["bad types for not", 'cast: !"hello"', /Expected a boolean/],
-  //   ["bad types for random", "print(random 3);", /Expected an array/],
+
   //   ["non-integer index", "let a=[1];print(a[false]);", /Expected an integer/],
   // ["no such field", "struct S{} let x=S(); print(x.y);", /No such field/],
   //   ["diff type array elements", "print([3,3.0]);", /Not all elements have the same type/],
   //   ["shadowing", "let x = 1;\nwhile true {let x = 1;}", /Identifier x already declared/],
-  //   ["call of uncallable", "let x = 1;\nprint(x());", /Call of non-function/],
+
+  //FUNCTION CALL NEEDS WORK!!!
+
+  ["call of uncallable", "land x = 1 cast: x()", /Call of non-function/],
+
+
   //   [
   //     "Too many args",
   //     "function f(x: int) {}\nf(1,2);",
@@ -171,12 +185,6 @@ const semanticErrors = [
   //      function g(z: boolean): int { return 5; }
   //      f(2, g);`,
   //     /Cannot assign a \(boolean\)->int to a \(boolean\)->void/,
-  //   ],
-  //   ["bad param type in fn assign", "function f(x: int) {} function g(y: float) {} f = g;"],
-  //   [
-  //     "bad return type in fn assign",
-  //     'function f(x: int): int {return 1;} function g(y: int): string {return "uh-oh";} f = g;',
-  //     /Cannot assign a \(int\)->string to a \(int\)->int/,
   //   ],
 ]
 
