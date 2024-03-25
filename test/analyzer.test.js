@@ -27,15 +27,6 @@ const semanticChecks = [
   ["while", "tide hooked{ cast: 1} "],
   ["||", "cast: hooked || unhooked || 1 || hello"],
   ["&&", "cast: (hooked && 1< 2 && unhooked &&!hooked)"],
-<<<<<<< HEAD
-  ["relations", 'cast:  1<= 2 && "x"> "y" &&  3.5 <1.2'],
-=======
-  //   ["bit ops", "print((1&2)|(9^3));"],
-  ["relations", 'cast:  1<= 2 && "x"> "y" &&  3.5 <1.2'],
-  //   ["ok to == arrays", "print([1]==[5,8]);"],
-  //   ["ok to != arrays", "print([1]!=[5,8]);"],
-  //   ["shifts", "print(1<<3<<5<<8>>2>>0);"],
->>>>>>> 06adef368c1c0d55c0ef9d6574df8b85f909a37e
   ["arithmetic", "land x = 1 cast: (2*3+5**-3/2-5%8)"],
   ["variables", "land x = [[[[1]]]] cast: x + 2"],
   ["assigned functions", "ocean int f(){ let g = f let f = g}"],
@@ -50,10 +41,6 @@ const semanticErrors = [
   ["non-int decrement", 'land x = hooked x--', /Expected an integer/],
   ["undeclared id", "cast: x", /Identifier x not declared/],
   ["redeclared id", "land x = 1 land x = 1", /Identifier x already declared/],
-<<<<<<< HEAD
-=======
-    //   ["assign bad type", "let x=1;x=true;", /Cannot assign a boolean to a int/],
->>>>>>> 06adef368c1c0d55c0ef9d6574df8b85f909a37e
   ["break outside loop", "snap", /Break can only appear in a loop/],
   ["continue outside loop", "flow", /Continue can only appear in a loop/],
   [
@@ -103,52 +90,8 @@ const semanticErrors = [
   ["bad types for !=", "cast: unhooked != 1", /not have the same type/],
   ["bad types for negation", "cast: -hooked", /Expected a number/],
   ["bad types for not", 'cast: !"hello"', /Expected a boolean/],
-<<<<<<< HEAD
-  //FUNCTION CALL NEEDS WORK!!!
   ["call of uncallable", "land x = 1 cast: x()", /Call of non-function/],
-=======
-
-  //   ["non-integer index", "let a=[1];print(a[false]);", /Expected an integer/],
-  // ["no such field", "struct S{} let x=S(); print(x.y);", /No such field/],
-  //   ["diff type array elements", "print([3,3.0]);", /Not all elements have the same type/],
-  //   ["shadowing", "let x = 1;\nwhile true {let x = 1;}", /Identifier x already declared/],
-
-  //FUNCTION CALL NEEDS WORK!!!
-
   ["call of uncallable", "land x = 1 cast: x()", /Call of non-function/],
-
-
-  //   [
-  //     "Too many args",
-  //     "function f(x: int) {}\nf(1,2);",
-  //     /1 argument\(s\) required but 2 passed/,
-  //   ],
-
-
-  //fix function call!!!!
-
-    // [
-    //   "Too few args",
-    //   "function f(x: int) {}\nf();",
-    //   /1 argument\(s\) required but 0 passed/,
-    // ],
-
-
-
-
-  //   [
-  //     "Parameter type mismatch",
-  //     "function f(x: int) {}\nf(false);",
-  //     /Cannot assign a boolean to a int/,
-  //   ],
-  //   [
-  //     "function type mismatch",
-  //     `function f(x: int, y: (boolean)->void): int { return 1; }
-  //      function g(z: boolean): int { return 5; }
-  //      f(2, g);`,
-  //     /Cannot assign a \(boolean\)->int to a \(boolean\)->void/,
-  //   ],
->>>>>>> 06adef368c1c0d55c0ef9d6574df8b85f909a37e
 ]
 
 describe("The analyzer", () => {
