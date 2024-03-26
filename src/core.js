@@ -31,8 +31,7 @@ export function emptyArray(type) {
 }
 
 export const voidType = { kind: "VoidType" }
-export const intType = { kind: "IntType" }
-export const floatType = { kind: "FloatType" }
+export const numberType = { kind: "NumberType" }
 export const stringType = { kind: "StringType" }
 export const letType = { kind: "LetType" }
 export const constType = { kind: "ConstType" }
@@ -98,6 +97,14 @@ export function shortReturnStatement() {
   return { kind: "returnStatement" }
 }
 
+export function incrementStatement(operand) {
+  return { kind: "incrementStatement", operand }
+}
+
+export function decrementStatement(operand) {
+  return { kind: "decrementStatement", operand }
+}
+
 export const breakStatement = { kind: "BreakStatement" }
 
 export const continueStatement = { kind: "continueStatement" }
@@ -130,11 +137,11 @@ export const standardLibrary = {
   // TODO fill this in someday
 }
 
-export function functionCall(callee, args){
-    return{kind: "FunctionCall", callee, args, type: callee.type.returnType}
+export function functionCall(callee, args) {
+  return { kind: "FunctionCall", callee, args, type: callee.type.returnType }
 }
 
 String.prototype.type = stringType
-Number.prototype.type = floatType
-BigInt.prototype.type = intType
+Number.prototype.type = numberType
+BigInt.prototype.type = numberType
 Boolean.prototype.type = boolType

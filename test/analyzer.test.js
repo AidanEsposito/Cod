@@ -1,19 +1,24 @@
 import assert from "node:assert/strict"
 import parse from "../src/parser.js"
 import analyze from "../src/analyzer.js"
-import { program, variableDeclaration, variable, binary, floatType } from "../src/core.js"
+import {
+  program,
+  variableDeclaration,
+  variable,
+  binary,
+  numberType,
+} from "../src/core.js"
 
 // Programs that are semantically correct
 const semanticChecks = [
   ["simple print", "cast: 1"],
   ["complex print", "cast: 1 + 2 * 3 / 4 - 5 % 6 ** 7"],
-  ["variable declarations", "int x = 1 land y = unhooked"],
-  ["complex variable declarations", "int x = 1 land y = 2 cast: x + y"],
-  ["variable print", "land x = 1 cast: x"],
-  ["type array", "int x = [1, 2, 3]"],
-  ["increment and decrement", "land x = 10 x-- x++"],
-  ["increment and decrement", "land x = 10; x--; x++;"],
-  ["type declaration", "int x = 1, boolean y = hooked, string z = 'hello'"],
+  ["variable declarations", "number x = 1 boolean y = unhooked"],
+  ["complex variable declarations", "number x = 1 number y = 2 cast: x + y"],
+  ["variable print", "number x = 1 cast: x"],
+  ["type array", "number x = [1, 2, 3]"],
+  ["increment and decrement", "number x = 10 x-- x++"],
+  ["type declaration", 'number x = 1 boolean y = hooked string z = "hello"'],
   ["short return", "string test(){ reel }"],
   ["long return", "boolean test(){ reel hooked}"],
   //FIX RETURN IN OHM!
@@ -27,48 +32,48 @@ const semanticChecks = [
   ["while", "tide hooked{ cast: 1} "],
   ["||", "cast: hooked || unhooked || 1 || hello"],
   ["&&", "cast: (hooked && 1< 2 && unhooked &&!hooked)"],
-  ["arithmetic", "land x = 1 cast: (2*3+5**-3/2-5%8)"],
+  ["arithmetic", "number x = 1 cast: (2*3+5**-3/2-5%8)"],
   ["variables", "land x = [[[[1]]]] cast: x + 2"],
-  ["assigned functions", "ocean int f(){ let g = f let f = g}"],
-  ["multi param functions", "ocean int hello (int x, int y){ cast: 1}"],
-  ["outer variable", "land x = 1 tide unhooked { cast: x }"],
+  ["assigned functions", "ocean number f(){ let g = f let f = g}"],
+  ["multi param functions", "ocean number hello (number x, number y){ cast: 1}"],
+  ["outer variable", "number x = 1 tide unhooked { cast: x }"],
 ]
 
 // // Programs that are syntactically correct but have semantic errors
 const semanticErrors = [
-  ["non-distinct fields", "int hello(int x, boolean x){}", /Fields must be distinct/],
-  ["non-int increment", "boolean x = unhooked x++", /Expected an integer/],
-  ["non-int decrement", 'land x = hooked x--', /Expected an integer/],
+  [
+    "non-distinct fields",
+    "number hello(number x, boolean x){}",
+    /Fields must be distinct/,
+  ],
+  ["non-number increment", "boolean x = unhooked x++", /Expected an integer/],
+  ["non-number decrement", "land x = hooked x--", /Expected an integer/],
   ["undeclared id", "cast: x", /Identifier x not declared/],
   ["redeclared id", "land x = 1 land x = 1", /Identifier x already declared/],
   ["break outside loop", "snap", /Break can only appear in a loop/],
   ["continue outside loop", "flow", /Continue can only appear in a loop/],
   [
-        "break inside function",
-        "tide hooked{ boolean f(){ snap}}",
-        /Break can only appear in a loop/,
+    "break inside function",
+    "tide hooked{ boolean f(){ snap}}",
+    /Break can only appear in a loop/,
   ],
   ["return outside function", "reel", /Return can only appear in a function/],
 
-  [
-    "return value from void function",
-    "lost hello(){ reel 1}",
-    /Cannot return a value/,
-  ],
+  ["return value from void function", "lost hello(){ reel 1}", /Cannot return a value/],
 
-  ["return nothing from non-void", "int f(){ return }", /should be returned/], //possibly fails syntax checks beforehand
+  ["return nothing from non-void", "number f(){ return }", /should be returned/], //possibly fails syntax checks beforehand
   [
     "classes can't be made inside of functions",
-    "ocean int x(){ ocean school tag: cast: x }",
+    "ocean number x(){ ocean school tag: cast: x }",
     /Classes can't be made inside of functions/,
   ],
   [
-    "public classes can't be made inside of private classes", 
-    "lake school x: ocean school y: cast: x", 
+    "public classes can't be made inside of private classes",
+    "lake school x: ocean school y: cast: x",
     /Public classes can't be made in Private classes/,
   ],
 
-  ["return type mismatch", " int test() { reel unhooked }", /boolean to a int/],
+  ["return type mismatch", " number test() { reel unhooked }", /boolean to a int/],
   ["non-boolean short if test", "if 1 {}", /Expected hooked or unhooked (a boolean)/],
   ["non-boolean if test", " if 1 {} else {}", /Expected a boolean/],
   ["non-boolean while test", "tide 1 {}", /Expected a boolean/],

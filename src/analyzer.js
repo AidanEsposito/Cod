@@ -7,9 +7,9 @@
 import * as core from "./core.js"
 
 const INT = core.intType
-const FLOAT = core.floatType
-const STRING = core.stringType
+const NUMBER = core.numberType
 const BOOLEAN = core.boolType
+const STRING = core.stringType
 const VOID = core.voidType
 const ANY = core.anyType
 
@@ -74,11 +74,11 @@ export default function analyze(match) {
   }
 
   function mustHaveNumericType(e, at) {
-    must([INT, FLOAT].includes(e.type), "Expected a number", at)
+    must(e.type == NUMBER, "Expected a number", at)
   }
 
   function mustHaveNumericOrStringType(e, at) {
-    must([INT, FLOAT, STRING].includes(e.type), "Expected a number or string", at)
+    must([NUMBER, STRING].includes(e.type), "Expected a number or string", at)
   }
 
   function mustHaveBooleanType(e, at) {
@@ -164,10 +164,8 @@ export default function analyze(match) {
 
   function typeDescription(type) {
     switch (type.kind) {
-      case "IntType":
-        return "int"
-      case "FloatType":
-        return "float"
+      case "NumberType":
+        return "number"
       case "StringType":
         return "string"
       case "BoolType":
@@ -388,14 +386,22 @@ export default function analyze(match) {
     },
 
     Exp2_relational_operator(left, relop, right) {
-      const [leftOperand, op, rightOperand] = [left.rep(), relop.sourceString, right.rep()]
+      const [leftOperand, op, rightOperand] = [
+        left.rep(),
+        relop.sourceString,
+        right.rep(),
+      ]
       mustHaveNumericOrStringType(leftOperand, { at: left })
       mustHaveNumericOrStringType(rightOperand, { at: right })
       return core.binary(op, leftOperand, rightOperand, BOOLEAN)
     },
 
-    Exp3_add_subtract(left, addOp, subOp, right) {
-      const [leftOperand, op, rightOperand] = [left.rep(), addOp.sourceString, right.rep()]
+    Exp3_add_subtract(left, addOp, right) {
+      const [leftOperand, op, rightOperand] = [
+        left.rep(),
+        addOp.sourceString,
+        right.rep(),
+      ]
       if (op === "+") {
         mustHaveNumericOrStringType(leftOperand, { at: left })
       } else {
@@ -405,8 +411,12 @@ export default function analyze(match) {
       return core.binary(op, leftOperand, rightOperand, leftOperand.type)
     },
 
-    Term_multi_divide_modulo(left, mulOp, divOp, modOp, right) {
-      const [leftOperand, op, rightOperand] = [left.rep(), mulOp.sourceString, right.rep()]
+    Term_multi_divide_modulo(left, mulOp, right) {
+      const [leftOperand, op, rightOperand] = [
+        left.rep(),
+        mulOp.sourceString,
+        right.rep(),
+      ]
       mustHaveNumericType(leftOperand, { at: left })
       mustBothHaveTheSameType(leftOperand, rightOperand, { at: mulOp })
       return core.binary(op, leftOperand, rightOperand, leftOperand.type)
@@ -418,8 +428,6 @@ export default function analyze(match) {
       mustHaveNumericType(exp, { at: exponent })
       return core.binary("**", base, exp, base.type)
     },
-
-
 
     // Array_exp(_open, args, _close) {
     //   const elements = args.asIteration().children.map((e) => e.rep())
@@ -449,8 +457,8 @@ export default function analyze(match) {
     //   return core.assignment(target, source)
     // },
 
-    Block(_bracketL, statement, _bracketR) {
-      return statement.rep()
+    Block(_bracketL, statements, _bracketR) {
+      return statements.children.map((s) => s.rep())
     },
 
     PrintStmt(_cast, _colon, exp) {
@@ -521,7 +529,7 @@ export default function analyze(match) {
       return core.whileStatement(test, body)
     },
 
-    ReturnStmt_return(_reel, exp) {
+    ReturnStmt_long(_reel, exp) {
       const expression = exp.rep()
       const f = context.function
       mustBeInAFunction({ at: _reel })
@@ -529,11 +537,24 @@ export default function analyze(match) {
       return core.returnStatement(expression)
     },
 
-    // IncDecStmt(tag, _inc, _dec) {
-    //   const variable = tag.rep()
-    //   mustHaveNumericType(variable, { at: tag })
-    //   return core.incDecStatement(variable)
-    // },
+    ReturnStmt_short(_reel) {
+      const f = context.function
+      mustBeInAFunction({ at: _reel })
+      // TODO YOU CHECK TO MAKE SURE THE FUNCTION RETURNS A VOID
+      return core.shortReturnStatement()
+    },
+
+    IncStmt(tag, op) {
+      const variable = tag.rep()
+      mustHaveNumericType(variable, { at: tag })
+      return core.incrementStatement(variable, op.sourceString)
+    },
+
+    DecStmt(tag, op) {
+      const variable = tag.rep()
+      mustHaveNumericType(variable, { at: tag })
+      return core.decrementStatement(variable, op.sourceString)
+    },
 
     BreakStmt_break(_snap) {
       mustBeInLoop({ at: _snap })
@@ -649,6 +670,10 @@ export default function analyze(match) {
       return expression.rep()
     },
 
+    Primary_array(_open, expList, _close) {
+      return expList.asIteration().children.map((e) => e.rep())
+    },
+
     Params(expList) {
       return expList.asIteration().children.map((e) => e.rep())
     },
@@ -676,22 +701,19 @@ export default function analyze(match) {
     },
 
     lost(_lost) {
-      return "void"
+      return core.voidType
     },
-    int(_) {
-      return "int"
-    },
-    float(_) {
-      return "float"
+    number(_) {
+      return core.numberType
     },
     string(_) {
-      return "int"
+      return core.stringType
     },
     land(_) {
       return "land"
     },
     boolean(_) {
-      return "boolean"
+      return core.boolType
     },
 
     fish(_whole, _point, _fraction, _e, _sign, _exponent) {

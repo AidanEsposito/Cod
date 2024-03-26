@@ -6,7 +6,7 @@ const syntaxChecks = [
   ["all unary operators", "cast: (-3) cast: (!false)"],
   ["all binary operators", "cast: x && y || z * 1 / 2 ** 3 + 4 < 5"],
   ["all arithmetic operators", "int x = (!hooked) * 2 + 4 - (-7.3) * 8 ** 13 / 1"],
-  ["digits work with fraction and exponents", "float number = 3.33E33"],
+  ["digits work with fraction and exponents", "number n = 3.33E33"],
   ["all relational operators", "int x = 1<(2<=(3==(4!=(5 >= (6>7)))))"],
   ["all logical operators", "int x = hooked && unhooked || (!unhooked)"],
   ["end of program inside comment", "cast:(0) // yay"],
@@ -31,7 +31,7 @@ const syntaxChecks = [
 
 const syntaxErrors = [
   ["non-letter in an identifier", "string ab😭c = 2", /Line 1, col 10/],
-  ["malformed number", "float x= 2.", /Line 1, col 12/],
+  ["malformed number", "number x= 2.", /Line 1, col 13/],
   ["missing id", " = 3, y = 1", /Line 1, col 2/],
   ["a missing right operand", "cast:(5 -", /Line 1, col 10/],
   ["a non-operator", "cast:(7 * ((2 _ 3)", /Line 1, col 15/],
@@ -44,7 +44,7 @@ const syntaxErrors = [
   ["print (cast) lacking :", "cast x = 2", /Line 1, col 6/],
   ["variable can't be class", "ocean 2 hello: x = 2", /Line 1, col 7/],
   ["keywords can't be used in variable declaration", "sock = 2", /Line 1, col 1/],
-  ["Can't have non integer after .", "float x = 2.hello", /Line 1, col 13/],
+  ["Can't have non integer after .", "number x = 2.hello", /Line 1, col 14/],
 ]
 
 describe("The parser", () => {

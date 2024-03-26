@@ -35,8 +35,7 @@ Cod{
     Type        	 = Type "[" "]"                                       -- array
                         | tag                                                 -- id
                         | lost                                              -- void     
-                        | int
-                        | float
+                        | number
                         | string
                         | land
                         | boolean
@@ -48,8 +47,8 @@ Cod{
 
    IncDecStmt     = IncStmt | DecStmt
 
-   IncStmt        = tag "++"
-   DecStmt        = tag "--"
+   IncStmt        = Primary_id "++"
+   DecStmt        = Primary_id "--"
    
     IfStmt      	 = if Exp Block else Block                           --if_else
                         | if Exp Block else IfStmt                          --nested_if
@@ -60,7 +59,8 @@ Cod{
 
     WhileStmt      = tide Exp Block                                   -- while    
 
-    ReturnStmt     = reel Exp?                                        -- return
+    ReturnStmt     = reel Exp                                -- long
+                   | reel                                    -- short
 
     BreakStmt      = snap                                             -- break
 
@@ -108,8 +108,7 @@ Cod{
     relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!=" 
 
     land         	 = "land" ~idchar       //let
-    int 			   = "int" ~idchar          //int
-    float 			  = "float" ~idchar       //float
+    number 			   = "number" ~idchar          //number
     string			 = "string" ~idchar       //string
     boolean 	  = "boolean" ~idchar       //boolean
     boat      	     = "boat" ~idchar     //struct
@@ -138,7 +137,7 @@ Cod{
     
 
     keyword    = land | boat | function
-               | if | else | reel | snap | flow | int | float | string
+               | if | else | reel | snap | flow | number | string
                | pitch | recast | throw | stream | tacklebox
                | catch | school | ocean | lake | lost | in
                | tide | cast | sock | hooked | unhooked | boolean
