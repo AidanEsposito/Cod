@@ -8,7 +8,7 @@
     "test": "c8 mocha"
   },
   "keywords": [],
-  "author": "AidanEsposito, troythetre, KhalidASC20 ",
+  "author": "AidanEsposito, troythetre, KhalidASC20",
   "license": "MIT",
   "devDependencies": {
     "c8": "^9.1.0",
