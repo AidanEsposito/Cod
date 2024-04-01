@@ -85,6 +85,10 @@ export default function analyze(match) {
     must(e.type === BOOLEAN, "Expected a boolean", at)
   }
 
+  function cannotAssignANumberToVoid(e, at) {
+    must(e.type !== VOID, "Cannot assign a number to void", at)
+  }
+
   function mustHaveIntegerType(e, at) {
     must(e.type === INT, "Expected a number", at)
   }
@@ -211,6 +215,10 @@ export default function analyze(match) {
     must(context.inLoop, "Break can only appear in a loop", at)
   }
 
+  function continuMustBeInLoop(at) {
+    must(context.inLoop, "Continue can only appear in a loop", at)
+  }
+
   function mustBeInAFunction(at) {
     must(context.function, "Return can only appear in a function", at)
   }
@@ -237,6 +245,16 @@ export default function analyze(match) {
     must(argCount === paramCount, message, at)
   }
 
+  function mustNotBeInPrivateClass(at) {
+    must(!context.function, "Public classes can't be made in Private classes", at)
+  }
+
+  function mustNotBeInFunction(at) {
+      must(!context.function, "Classes can't be made inside of functions", at)
+  }
+
+
+
   // Building the program representation will be done together with semantic
   // analysis and error checking. In Ohm, we do this with a semantics object
   // that has an operation for each relevant rule in the grammar. Since the
@@ -256,7 +274,9 @@ export default function analyze(match) {
         type.rep()
       )
       const functionEntity = core.fun(tag.sourceString, functionType)
+      cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
@@ -276,6 +296,8 @@ export default function analyze(match) {
       )
       const functionEntity = core.fun(tag.sourceString, functionType)
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      cannotAssignANumberToVoid(functionType, { at: tag })
+      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
@@ -291,7 +313,9 @@ export default function analyze(match) {
     FuncDecl_function_public_no_params(_ocean, type, tag, _parenL, _parenR, block) {
       const functionType = core.functionType([], type.rep())
       const functionEntity = core.fun(tag.sourceString, functionType)
+      cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
@@ -302,7 +326,9 @@ export default function analyze(match) {
     FuncDecl_function_private_no_params(_lake, type, tag, _parenL, _parenR, block) {
       const functionType = core.functionType([], type.rep())
       const functionEntity = core.fun(tag.sourceString, functionType)
+      cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
@@ -356,6 +382,7 @@ export default function analyze(match) {
     ClassDecl_class_public(_ocean, school, tag, _colon) {
       const classType = core.structType(tag.sourceString, [])
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      mustNotBeInPrivateClass({ at: tag })
       context.add(tag.sourceString, classType)
       return classType
     },
@@ -363,6 +390,7 @@ export default function analyze(match) {
     ClassDecl_class_private(_lake, school, tag, _colon) {
       const classType = core.structType(tag.sourceString, [])
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+      mustNotBeInPrivateClass({ at: tag })
       context.add(tag.sourceString, classType)
       return classType
     },
@@ -566,7 +594,7 @@ export default function analyze(match) {
     },
 
     ContinueStmt_continue(_flow) {
-      mustBeInLoop({ at: _flow })
+      continuMustBeInLoop({ at: _flow })
       return core.breakStatement()
     },
 

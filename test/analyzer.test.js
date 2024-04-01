@@ -34,8 +34,8 @@ const semanticChecks = [
   ["&&", "cast: (hooked && 1< 2 && unhooked &&!hooked)"],
   ["arithmetic", "number x = 1 cast: (2*3+5**-3/2-5%8)"],
   ["variables", "land x = [[[[1]]]] cast: x + 2"],
-  ["assigned functions", "ocean number f(){ let g = f let f = g}"],
-  ["multi param functions", "ocean number hello (number x, number y){ cast: 1}"],
+  ["assigned functions", "ocean number f(){ number g = f number f = g}"],
+  ["multi param functions", "ocean number hello (number hi, number y){ cast: 1}"],
   ["outer variable", "number x = 1 tide unhooked { cast: x }"],
 ]
 
@@ -47,9 +47,9 @@ const semanticErrors = [
     /Fields must be distinct/,
   ],
   ["non-number increment", "boolean x = unhooked x++", /Expected a number/],
-  ["non-number decrement", "land x = hooked x--", /Expected a number/],
+  ["non-number decrement", "boolean x = hooked x--", /Expected a number/],
   ["undeclared id", "cast: x", /Identifier x not declared/],
-  ["redeclared id", "land x = 1 land x = 1", /Identifier x already declared/],
+  ["redeclared id", "number x = 1 number x = 1", /Identifier x already declared/],
   ["break outside loop", "snap", /Break can only appear in a loop/],
   ["continue outside loop", "flow", /Continue can only appear in a loop/],
   [
@@ -59,7 +59,7 @@ const semanticErrors = [
   ],
   ["return outside function", "reel", /Return can only appear in a function/],
 
-  ["return value from void function", "lost hello(){ reel 1}", /Cannot return a value/],
+  ["return value from void function", "lost hello(){ reel 1}", /Cannot assign a number to void/],
 
   ["return nothing from non-void", "number f(){ reel }", /should be returned/], //possibly fails syntax checks beforehand
   [
@@ -73,7 +73,7 @@ const semanticErrors = [
     /Public classes can't be made in Private classes/,
   ],
 
-  ["return type mismatch", " number test() { reel unhooked }", /boolean to a int/],
+  ["return type mismatch", " number test() { reel unhooked }", /Cannot assign a boolean to a number/],
   ["non-boolean short if test", "if 1 {}", /Expected a boolean/],
   ["non-boolean if test", " if 1 {} else {}", /Expected a boolean/],
   ["non-boolean while test", "tide 1 {}", /Expected a boolean/],
