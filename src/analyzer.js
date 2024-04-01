@@ -541,6 +541,7 @@ export default function analyze(match) {
       const f = context.function
       mustBeInAFunction({ at: _reel })
       // TODO YOU CHECK TO MAKE SURE THE FUNCTION RETURNS A VOID
+      
       return core.shortReturnStatement()
     },
 
@@ -672,6 +673,12 @@ export default function analyze(match) {
 
     Primary_array(_open, expList, _close) {
       return expList.asIteration().children.map((e) => e.rep())
+    },
+    
+    Primary_unary(unaryOp, exp) {
+      const [op, operand] = [unaryOp.sourceString, exp.rep()]
+      // Do type checking here if you need to
+      return core.unary(op, operand)
     },
 
     Params(expList) {
