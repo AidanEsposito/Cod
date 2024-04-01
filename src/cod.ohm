@@ -32,14 +32,14 @@ Cod{
     ClassDecl      = ocean?  school tag ":"                               --class_public
                 	   | lake?  school  tag ":"                              --class_private
                 
-    Type        	 = Type "[" "]"                                       -- array
-                        | tag                                                 -- id
+    Type        	 = "[" Type "]"                                       -- array
                         | lost                                              -- void     
-                        | number
+                        | number    -- number
                         | string
                         | land
                         | boolean
                         | StructDecl
+                        | tag                                                 -- id
         
     Block       	 = "{" Stmt* "}"
 

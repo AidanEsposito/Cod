@@ -371,6 +371,10 @@ export default function analyze(match) {
       return core.arrayType(baseType.rep())
     },
 
+    Type_number(_number) {
+      return core.numberType
+    },
+
     Exp_or(left, _or, right) {
       const [leftOperand, rightOperand] = [left.rep(), right.rep()]
       mustHaveBooleanType(leftOperand, { at: left })
@@ -672,7 +676,9 @@ export default function analyze(match) {
     },
 
     Primary_array(_open, expList, _close) {
-      return expList.asIteration().children.map((e) => e.rep())
+      const elements = expList.asIteration().children.map((e) => e.rep())
+      mustAllHaveSameType(elements, { at: expList })
+      return core.arrayExpression(elements)
     },
 
     Primary_urnary(negOp, primary) {},
