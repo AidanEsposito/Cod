@@ -28,9 +28,9 @@ const semanticChecks = [
   ["long if", "if hooked { cast: 1} else {cast: 3}"],
   ["elsif", "if hooked {cast: 1} else if hooked { cast: 0} else {cast: 3}"],
 
-  ["for in range", "stream i in x < 10{ cast: 0 }"],
+  ["for in range", "stream i in [1,2,3] < 10{ cast: 0 }"],
   ["while", "tide hooked{ cast: 1} "],
-  ["||", "cast: hooked || unhooked || 1 || hello"],
+  ["||", "boolean hello = unhooked cast: hooked || unhooked || hello"],
   ["&&", "cast: (hooked && 1< 2 && unhooked &&!hooked)"],
   ["arithmetic", "number x = 1 cast: (2*3+5**-3/2-5%8)"],
   ["variables", "land x = [[[[1]]]] cast: x + 2"],
@@ -46,8 +46,8 @@ const semanticErrors = [
     "number hello(number x, boolean x){}",
     /Fields must be distinct/,
   ],
-  ["non-number increment", "boolean x = unhooked x++", /Expected an integer/],
-  ["non-number decrement", "land x = hooked x--", /Expected an integer/],
+  ["non-number increment", "boolean x = unhooked x++", /Expected a number/],
+  ["non-number decrement", "land x = hooked x--", /Expected a number/],
   ["undeclared id", "cast: x", /Identifier x not declared/],
   ["redeclared id", "land x = 1 land x = 1", /Identifier x already declared/],
   ["break outside loop", "snap", /Break can only appear in a loop/],
@@ -61,7 +61,7 @@ const semanticErrors = [
 
   ["return value from void function", "lost hello(){ reel 1}", /Cannot return a value/],
 
-  ["return nothing from non-void", "number f(){ return }", /should be returned/], //possibly fails syntax checks beforehand
+  ["return nothing from non-void", "number f(){ reel }", /should be returned/], //possibly fails syntax checks beforehand
   [
     "classes can't be made inside of functions",
     "ocean number x(){ ocean school tag: cast: x }",
@@ -74,13 +74,11 @@ const semanticErrors = [
   ],
 
   ["return type mismatch", " number test() { reel unhooked }", /boolean to a int/],
-  ["non-boolean short if test", "if 1 {}", /Expected hooked or unhooked (a boolean)/],
+  ["non-boolean short if test", "if 1 {}", /Expected a boolean/],
   ["non-boolean if test", " if 1 {} else {}", /Expected a boolean/],
   ["non-boolean while test", "tide 1 {}", /Expected a boolean/],
   ["bad types for ||", "cast: unhooked || 1", /Expected a boolean/],
   ["bad types for &&", "cast: unhooked && 1", /Expected a boolean/],
-  ["bad types for ==", "cast: unhooked ==1", /Operands do not have the same type/],
-  ["bad types for !=", "cast: unhooked != 1", /Operands do not have the same type/],
   ["bad types for +", "cast: unhooked + 1 ", /Expected a number or string/],
   ["bad types for -", "cast: unhooked - 1", /Expected a number/],
   ["bad types for *", "cast: unhooked * 1", /Expected a number/],
@@ -95,8 +93,7 @@ const semanticErrors = [
   ["bad types for !=", "cast: unhooked != 1", /not have the same type/],
   ["bad types for negation", "cast: -hooked", /Expected a number/],
   ["bad types for not", 'cast: !"hello"', /Expected a boolean/],
-  ["call of uncallable", "land x = 1 cast: x()", /Call of non-function/],
-  ["call of uncallable", "land x = 1 cast: x()", /Call of non-function/],
+  ["call of uncallable", "number x = 1 cast: x()", /Call of non-function/],
 ]
 
 describe("The analyzer", () => {

@@ -86,7 +86,7 @@ export default function analyze(match) {
   }
 
   function mustHaveIntegerType(e, at) {
-    must(e.type === INT, "Expected an integer", at)
+    must(e.type === INT, "Expected a number", at)
   }
 
   function mustHaveAnArrayType(e, at) {
@@ -541,7 +541,7 @@ export default function analyze(match) {
       const f = context.function
       mustBeInAFunction({ at: _reel })
       // TODO YOU CHECK TO MAKE SURE THE FUNCTION RETURNS A VOID
-      
+
       return core.shortReturnStatement()
     },
 
@@ -674,9 +674,8 @@ export default function analyze(match) {
     Primary_array(_open, expList, _close) {
       return expList.asIteration().children.map((e) => e.rep())
     },
-    
-    Primary_urnary(negOp, primary ){
-    },
+
+    Primary_urnary(negOp, primary) {},
 
     Params(expList) {
       return expList.asIteration().children.map((e) => e.rep())

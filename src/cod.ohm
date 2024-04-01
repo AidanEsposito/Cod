@@ -92,7 +92,7 @@ Cod{
                    | FuncCall                                
                 	 | Primary
 
-    FuncCall       =  tag "(" ListOf<Exp, ","> ")"
+    FuncCall       =  Primary_id "(" ListOf<Exp, ","> ")"
 
     Primary          = "(" Exp ")"                                       -- parens
                      | "[" NonemptyListOf<Exp, ","> "]"                  -- array
@@ -142,7 +142,7 @@ Cod{
                | catch | school | ocean | lake | lost | in
                | tide | cast | sock | hooked | unhooked | boolean
     
-    tag        = ~keyword "!"? letter idchar*
+    tag        = ~keyword letter idchar*
     idchar     = alnum | "_"
     fish       = digit+ ("." digit+)? (("e" | "E") ("+" | "-")? digit+)?
     

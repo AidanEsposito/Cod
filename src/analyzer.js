@@ -86,7 +86,7 @@ export default function analyze(match) {
   }
 
   function mustHaveIntegerType(e, at) {
-    must(e.type === INT, "Expected an integer", at)
+    must(e.type === INT, "Expected a number", at)
   }
 
   function mustHaveAnArrayType(e, at) {
@@ -386,13 +386,16 @@ export default function analyze(match) {
     },
 
     Exp2_relational_operator(left, relop, right) {
+      // ==, !=. <, <=, >, >=
       const [leftOperand, op, rightOperand] = [
         left.rep(),
         relop.sourceString,
         right.rep(),
       ]
-      mustHaveNumericOrStringType(leftOperand, { at: left })
-      mustHaveNumericOrStringType(rightOperand, { at: right })
+      if (["<", "<=", ">", ">="].includes(op)) {
+        mustHaveNumericOrStringType(leftOperand, { at: left })
+      }
+      mustBothHaveTheSameType(leftOperand, rightOperand, { at: relop })
       return core.binary(op, leftOperand, rightOperand, BOOLEAN)
     },
 
@@ -541,7 +544,7 @@ export default function analyze(match) {
       const f = context.function
       mustBeInAFunction({ at: _reel })
       // TODO YOU CHECK TO MAKE SURE THE FUNCTION RETURNS A VOID
-      
+
       return core.shortReturnStatement()
     },
 
@@ -559,7 +562,7 @@ export default function analyze(match) {
 
     BreakStmt_break(_snap) {
       mustBeInLoop({ at: _snap })
-      return core.breakStatement()
+      return core.breakStatement
     },
 
     ContinueStmt_continue(_flow) {
@@ -674,11 +677,17 @@ export default function analyze(match) {
     Primary_array(_open, expList, _close) {
       return expList.asIteration().children.map((e) => e.rep())
     },
-    
+
     Primary_unary(unaryOp, exp) {
       const [op, operand] = [unaryOp.sourceString, exp.rep()]
-      // Do type checking here if you need to
-      return core.unary(op, operand)
+      if (op === "-") {
+        mustHaveNumericType(operand, { at: exp })
+        return core.unary(op, operand, NUMBER)
+      } else {
+        // op === "!"
+        mustHaveBooleanType(operand, { at: exp })
+        return core.unary(op, operand, BOOLEAN)
+      }
     },
 
     Params(expList) {
