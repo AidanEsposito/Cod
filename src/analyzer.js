@@ -124,6 +124,10 @@ export default function analyze(match) {
     must(t?.kind === "ArrayType", "Must be an array type", at)
   }
 
+  function mustNotContainBreakInFunction(at) {
+    must(!context.inLoop, "Break can only appear in a loop", at)
+  }
+
   function includesAsField(structType, type) {
     // Whether the struct type has a field of type type, directly or indirectly
     return structType.fields.some(
@@ -246,8 +250,14 @@ export default function analyze(match) {
   }
 
   function mustNotBeInPrivateClass(at) {
-    must(!context.function, "Public classes can't be made in Private classes", at)
+  let currentContext = context;
+  while (currentContext !== null) {
+    if (currentContext.function && currentContext.function.isPrivate) {
+      throw new Error("Public classes can't be made in Private classes");
+    }
+    currentContext = currentContext.parent;
   }
+} 
 
   function mustNotBeInFunction(at) {
       must(!context.function, "Classes can't be made inside of functions", at)
@@ -276,11 +286,11 @@ export default function analyze(match) {
       const functionEntity = core.fun(tag.sourceString, functionType)
       cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
       context = context.parent
+      mustNotContainBreakInFunction({ at: tag })
       return core.functionDeclaration(
         tag.sourceString,
         functionEntity,
@@ -297,11 +307,11 @@ export default function analyze(match) {
       const functionEntity = core.fun(tag.sourceString, functionType)
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       cannotAssignANumberToVoid(functionType, { at: tag })
-      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
       context = context.parent
+      mustNotContainBreakInFunction({ at: tag })
       return core.functionDeclaration(
         tag.sourceString,
         functionEntity,
@@ -315,11 +325,11 @@ export default function analyze(match) {
       const functionEntity = core.fun(tag.sourceString, functionType)
       cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
       context = context.parent
+      mustNotContainBreakInFunction({ at: tag })
       return core.functionDeclaration(tag.sourceString, functionEntity, [], body)
     },
 
@@ -328,11 +338,11 @@ export default function analyze(match) {
       const functionEntity = core.fun(tag.sourceString, functionType)
       cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      mustNotBeInFunction({ at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       const body = block.rep()
       context = context.parent
+      mustNotContainBreakInFunction({ at: tag })
       return core.functionDeclaration(tag.sourceString, functionEntity, [], body)
     },
 
@@ -376,21 +386,23 @@ export default function analyze(match) {
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       mustNotBeSelfContaining(structType, { at: tag })
       context.add(tag.sourceString, structType)
+      mustHaveDistinctFields(structType, { at: _braceL })
       return core.typeDeclaration(structType)
     },
 
     ClassDecl_class_public(_ocean, school, tag, _colon) {
-      const classType = core.structType(tag.sourceString, [])
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       mustNotBeInPrivateClass({ at: tag })
+      mustNotBeInFunction({ at: tag })
+      const classType = core.structType(tag.sourceString, [])
       context.add(tag.sourceString, classType)
       return classType
     },
 
     ClassDecl_class_private(_lake, school, tag, _colon) {
-      const classType = core.structType(tag.sourceString, [])
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      mustNotBeInPrivateClass({ at: tag })
+      mustNotBeInFunction({ at: tag });
+      const classType = core.structType(tag.sourceString, [])
       context.add(tag.sourceString, classType)
       return classType
     },
@@ -460,34 +472,6 @@ export default function analyze(match) {
       return core.binary("**", base, exp, base.type)
     },
 
-    // Array_exp(_open, args, _close) {
-    //   const elements = args.asIteration().children.map((e) => e.rep())
-    //   mustAllHaveSameType(elements, { at: args })
-    //   return core.arrayExpression(elements)
-    // },
-
-    // Empty_array(ty, _open, _close) {
-    //   const type = ty.rep()
-    //   mustBeAnArrayType(type, { at: ty })
-    //   return core.emptyArray(type)
-    // },
-
-    // Type_struct(boat, tag, _bracketL, varDecl, _bracketR) {
-    //   const structType = core.structType(tag.sourceString, varDecl.rep())
-    //   mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-    //   mustNotBeSelfContaining(structType, { at: tag })
-    //   context.add(tag.sourceString, structType)
-    //   return structType
-    // },
-
-    // Statement_assign(variable, _eq, expression, _semicolon) {
-    //   const source = expression.rep()
-    //   const target = variable.rep()
-    //   mustBeAssignable(source, { toType: target.type }, { at: variable })
-    //   mustNotBeReadOnly(target, { at: variable })
-    //   return core.assignment(target, source)
-    // },
-
     Block(_bracketL, statements, _bracketR) {
       return statements.children.map((s) => s.rep())
     },
@@ -528,18 +512,6 @@ export default function analyze(match) {
       return core.shortIfStatement(test, consequent)
     },
 
-    // ForStmt_for_in_range(_stream, tag, _in, _parenL, exp1, exp2, _parenR, exp, block) {
-    //   const [low, high] = [exp1.rep(), exp2.rep()]
-    //   mustHaveIntegerType(low, { at: exp1 })
-    //   mustHaveIntegerType(high, { at: exp2 })
-    //   const iterator = core.variable(tag.sourceString, INT, true)
-    //   context = context.newChildContext({ inLoop: true })
-    //   context.add(tag.sourceString, iterator)
-    //   const body = block.rep()
-    //   context = context.parent
-    //   return core.forRangeStatement(iterator, low, high, body)
-    // },
-
     ForStmt_for_in_collection(_stream, tag, _in, exp, block) {
       const collection = exp.rep()
       mustHaveAnArrayType(collection, { at: exp })
@@ -564,6 +536,7 @@ export default function analyze(match) {
       const expression = exp.rep()
       const f = context.function
       mustBeInAFunction({ at: _reel })
+      mustReturnSomething(f, { at: _reel })
       mustBeReturnable(expression, { from: f }, { at: _reel })
       return core.returnStatement(expression)
     },
@@ -571,7 +544,6 @@ export default function analyze(match) {
     ReturnStmt_short(_reel) {
       const f = context.function
       mustBeInAFunction({ at: _reel })
-      // TODO YOU CHECK TO MAKE SURE THE FUNCTION RETURNS A VOID
 
       return core.shortReturnStatement()
     },
@@ -608,18 +580,12 @@ export default function analyze(match) {
       return core.catchStatement(tag.sourceString, body)
     },
 
-    // Field(id, _colon, type) {
-    //   return core.field(id.sourceString, type.rep())
-    // },
-
     Type_id(id) {
       const entity = context.lookup(id.sourceString)
       mustHaveBeenFound(entity, id.sourceString, { at: id })
       mustBeAType(entity, { at: id })
       return entity
     },
-
-    // ADD the Exp rules here
 
     FuncCall(tag, _parenL, expList, _parenR) {
       const callee = tag.rep()
@@ -640,64 +606,6 @@ export default function analyze(match) {
         : core.functionCall(callee, args)
     },
 
-    // Unwrap_else(exp1, elseOp, exp2) {
-    //   const [optional, op, alternate] = [exp1.rep(), elseOp.sourceString, exp2.rep()]
-    //   mustHaveAnOptionalType(optional, { at: exp1 })
-    //   mustBeAssignable(alternate, { toType: optional.type.baseType }, { at: exp2 })
-    //   return core.binary(op, optional, alternate, optional.type)
-    // },
-
-    // Compare(leftOp, relop, rightOp) {
-    //   const [left, op, right] = [leftOp.rep(), relop.sourceString, rightOp.rep()]
-    //   // == and != can have any operand types as long as they are the same
-    //   // But inequality operators can only be applied to numbers and strings
-    //   if (["<", "<=", ">", ">="].includes(op)) {
-    //     mustHaveNumericOrStringType(left, { at: leftOp })
-    //   }
-    //   mustBothHaveTheSameType(left, right, { at: relop })
-    //   return core.binary(op, left, right, BOOLEAN)
-    // },
-
-    // Add(leftOp, addOp, rightOp) {
-    //   const [left, op, right] = [leftOp.rep(), addOp.sourceString, rightOp.rep()]
-    //   if (op === "+") {
-    //     mustHaveNumericOrStringType(left, { at: leftOp })
-    //   } else {
-    //     mustHaveNumericType(left, { at: leftOp })
-    //   }
-    //   mustBothHaveTheSameType(left, right, { at: addOp })
-    //   return core.binary(op, left, right, left.type)
-    // },
-
-    // Exp7_multiply(leftOp, mulOp, rightOp) {
-    //   const [left, op, right] = [leftOp.rep(), mulOp.sourceString, rightOp.rep()]
-    //   mustHaveNumericType(left, { at: leftOp })
-    //   mustBothHaveTheSameType(left, right, { at: mulOp })
-    //   return core.binary(op, left, right, left.type)
-    // },
-
-    //NEEDS WORK
-    // Unary(unaryOp, exp) {
-    //   const [op, operand] = [unaryOp.sourceString, exp.rep()]
-    //   let type
-    //   if (op === "#") {
-    //     mustHaveAnArrayType(operand, { at: exp })
-    //     type = INT
-    //   } else if (op === "-") {
-    //     mustHaveNumericType(operand, { at: exp })
-    //     type = operand.type
-    //   } else if (op === "!") {
-    //     mustHaveBooleanType(operand, { at: exp })
-    //     type = BOOLEAN
-    //   } else if (op === "some") {
-    //     type = core.optionalType(operand.type)
-    //   } else if (op === "random") {
-    //     mustHaveAnArrayType(operand, { at: exp })
-    //     type = operand.type.baseType
-    //   }
-    //   return core.unary(op, operand, type)
-    // },
-
     Primary_parens(_open, expression, _close) {
       return expression.rep()
     },
@@ -712,7 +620,6 @@ export default function analyze(match) {
         mustHaveNumericType(operand, { at: exp })
         return core.unary(op, operand, NUMBER)
       } else {
-        // op === "!"
         mustHaveBooleanType(operand, { at: exp })
         return core.unary(op, operand, BOOLEAN)
       }
@@ -723,14 +630,15 @@ export default function analyze(match) {
     },
 
     Param(type, tag) {
-      const variable = core.variable(tag.sourceString, false, type.rep())
-      mustNotAlreadyBeDeclared(variable.name, { at: tag })
-      context.add(variable.name, variable)
-      return variable
+      const paramName = tag.sourceString;
+      mustNotAlreadyBeDeclared(paramName, { at: tag });
+      const variable = core.variable(paramName, false, type.rep());
+      context.add(paramName, variable);
+      return variable;
     },
 
+
     Primary_id(tag) {
-      // When an id appears in an expression, it had better have been declared
       const entity = context.lookup(tag.sourceString)
       mustHaveBeenFound(entity, tag.sourceString, { at: tag })
       return entity
@@ -771,4 +679,3 @@ export default function analyze(match) {
   return builder(match).rep()
 }
 
-//STILL NEEDS: CLASSES, CONTINUE STATEMENT, TRY CATCH, PRINTSTMT, TYPES?, and GENERAL BUG CLEANING/FIXES

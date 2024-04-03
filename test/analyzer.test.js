@@ -35,7 +35,7 @@ const semanticChecks = [
   ["arithmetic", "number x = 1 cast: (2*3+5**-3/2-5%8)"],
   ["variables", "land x = [[[[1]]]] cast: x + 2"],
   ["assigned functions", "ocean number f(){ number g = f number f = g}"],
-  ["multi param functions", "ocean number hello (number hi, number y){ cast: 1}"],
+  ["multi param functions", "ocean number hello (number x, number y){ cast: 1}"],
   ["outer variable", "number x = 1 tide unhooked { cast: x }"],
 ]
 
@@ -59,12 +59,12 @@ const semanticErrors = [
   ],
   ["return outside function", "reel", /Return can only appear in a function/],
 
-  ["return value from void function", "lost hello(){ reel 1}", /Cannot assign a number to void/],
+  ["throws on return value from void function", "lost hello(){ reel 1}", /Cannot return a value from this function/],
 
-  ["return nothing from non-void", "number f(){ reel }", /should be returned/], //possibly fails syntax checks beforehand
+  ["throws on return nothing from non-void", "number hello(){ reel }", /Something should be returned/], //possibly fails syntax checks beforehand
   [
     "classes can't be made inside of functions",
-    "ocean number x(){ ocean school tag: cast: x }",
+    "ocean number x(){ ocean school y: cast: x }",
     /Classes can't be made inside of functions/,
   ],
   [
