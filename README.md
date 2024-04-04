@@ -55,6 +55,51 @@ compare.cod
 compare.js
 <img width="403" alt="Screen Shot 2024-01-26 at 1 12 46 PM" src="https://github.com/AidanEsposito/Cod-CMSI-3802/assets/89878648/631f897d-5bc5-4e2c-933d-6a59434fd0ca">
 
+
+Static Checking in Cod:
+
+* mustNotAlreadyBeDeclared: Checks if an identifer is already declared and prevents it from being called twice
+
+* mustHaveBeenFound: Checks if an identifier can be found throughout the code
+
+* mustHaveNumericType / mustHaveBooleanType / mustHaveNumericOrStringType / cannotAssignNumberToVoid / mustHaveIntegerType
+  / mustHaveStructType / mustHaveArrayType: Checks for specific types throughout programs
+
+* mustBothHaveTheSameType: Checks if comparing two types results in all elements having the same type
+
+* mustBeAType: Checks for specific types
+
+* incudesAsField: Checks whether the struct type has a field of type type, directly or indirectly
+
+* mustNotBeSelfContaining: Checks if a struct is not self containing
+
+* mustBeAssignable: Checks if a variable with specific types can be assigned to
+
+* mustNotBeReadOnly: checks if something is read only
+
+* mustHaveDistinctFields: Checks if fields in functions and sets are distinct
+
+* mustBeInLoop: Checks if break is in a loop
+
+* continuMustBeInLoop: Checks if continue is in loop
+
+* mustBeInAFunction: Checks if return is in a function
+
+* mustNotBeInFunction: Checks that classes can't be made inside functions
+
+* mustBeCallable: Checks that structs and functions are able to be called
+
+* mustNotReturnAnything: checks if return type is void and makes sure nothing can be returned
+
+* mustReturnSomething: Checks that if a function is not void, it can return something
+
+* mustBeReturnable: Checks if a variable or function is returnable
+
+* mustHaveCorrectArgumentCount: checks if a function has the correct amount of arguments desired and makes sure they work 
+  properly
+
+*mustNotBeInAPrivateClass: Makes sure public classes can't be made in private classes.
+
 Language Website: https://aidanesposito.github.io
 
 
