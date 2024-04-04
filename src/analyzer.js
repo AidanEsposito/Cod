@@ -237,6 +237,7 @@ export default function analyze(match) {
   }
 
   function mustReturnSomething(f, at) {
+    console.log(f)
     must(f.type.returnType !== VOID, "Cannot return a value from this function", at)
   }
 
@@ -280,7 +281,7 @@ export default function analyze(match) {
 
     FuncDecl_function_public(_ocean, type, tag, _parenL, params, _parenR, block) {
       const functionType = core.functionType(
-        params.rep().map((p) => p.type),
+        undefined, //changed
         type.rep()
       )
       const functionEntity = core.fun(tag.sourceString, functionType)
@@ -288,13 +289,15 @@ export default function analyze(match) {
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
+      let analyzedParams = params.rep()
+      functionType.paramTypes = analyzedParams.map((p) => p.type) //changed
       const body = block.rep()
       context = context.parent
       mustNotContainBreakInFunction({ at: tag })
       return core.functionDeclaration(
         tag.sourceString,
         functionEntity,
-        params.rep(),
+        analyzedParams,
         body
       )
     },
@@ -407,7 +410,7 @@ export default function analyze(match) {
       return classType
     },
 
-    Type_array(_left, baseType, _right) {
+    Type_array(baseType, _brackets) {
       return core.arrayType(baseType.rep())
     },
 
@@ -512,6 +515,16 @@ export default function analyze(match) {
       return core.shortIfStatement(test, consequent)
     },
 
+    ForStmt_for_in_range(_stream, tag, _in, low, op, high, block) {
+      const iterator = core.variable(tag.sourceString, true, INT)
+      context = context.newChildContext({ inLoop: true })
+      context.add(iterator.name, iterator)
+      const body = block.rep()
+      context = context.parent
+      return core.forRangeStatement(iterator, low.rep(), op.sourceString, high.rep(), body)
+
+    },
+
     ForStmt_for_in_collection(_stream, tag, _in, exp, block) {
       const collection = exp.rep()
       mustHaveAnArrayType(collection, { at: exp })
@@ -544,7 +557,7 @@ export default function analyze(match) {
     ReturnStmt_short(_reel) {
       const f = context.function
       mustBeInAFunction({ at: _reel })
-
+      mustNotReturnAnything(f, { at: _reel })
       return core.shortReturnStatement()
     },
 
@@ -611,7 +624,9 @@ export default function analyze(match) {
     },
 
     Primary_array(_open, expList, _close) {
-      return expList.asIteration().children.map((e) => e.rep())
+      let x = expList.asIteration().children.map((e) => e.rep())
+      x.type = core.arrayType(x[0].type)
+      return x
     },
 
     Primary_unary(unaryOp, exp) {

@@ -32,7 +32,7 @@ Cod{
     ClassDecl      = ocean?  school tag ":"                               --class_public
                 	   | lake?  school  tag ":"                              --class_private
                 
-    Type        	 = "[" Type "]"                                       -- array
+    Type        	 = Type "[]"                                       -- array
                         | lost                                              -- void     
                         | number    -- number
                         | string

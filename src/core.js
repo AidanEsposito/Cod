@@ -19,7 +19,7 @@ export function typeDeclaration(type) {
 }
 
 export function arrayType(baseType) {
-  return { kind: "arrayType", baseType }
+  return { kind: "ArrayType", baseType }
 }
 
 export function arrayExpression(elements) {
@@ -134,7 +134,6 @@ export function unary(op, operand, type) {
 }
 
 export const standardLibrary = {
-  // TODO fill this in someday
 }
 
 export function functionCall(callee, args) {

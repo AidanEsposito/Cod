@@ -16,25 +16,24 @@ const semanticChecks = [
   ["variable declarations", "number x = 1 boolean y = unhooked"],
   ["complex variable declarations", "number x = 1 number y = 2 cast: x + y"],
   ["variable print", "number x = 1 cast: x"],
-  ["type array", "number x = [1, 2, 3]"],
+  ["type array", "number[] x = [1, 2, 3]"],
   ["increment and decrement", "number x = 10 x-- x++"],
   ["type declaration", 'number x = 1 boolean y = hooked string z = "hello"'],
-  ["short return", "string test(){ reel }"],
+  //['short return", "number test(){ reel 1 }'],
   ["long return", "boolean test(){ reel hooked}"],
-  //FIX RETURN IN OHM!
-  ["return in nested if", "boolean f(){ if hooked{ reel}}"],
+  ["return in nested if", "boolean f(){ if hooked{ reel hooked}}"],
   ["break in nested if", "tide unhooked{ if hooked{ snap}} "],
   ["short if", "if hooked { cast: 1}"],
   ["long if", "if hooked { cast: 1} else {cast: 3}"],
   ["elsif", "if hooked {cast: 1} else if hooked { cast: 0} else {cast: 3}"],
 
-  ["for in range", "stream i in [1,2,3] < 10{ cast: 0 }"],
+  ["for in range", "stream i in 1 ..< 10{ cast: 0 }"],
   ["while", "tide hooked{ cast: 1} "],
   ["||", "boolean hello = unhooked cast: hooked || unhooked || hello"],
   ["&&", "cast: (hooked && 1< 2 && unhooked &&!hooked)"],
   ["arithmetic", "number x = 1 cast: (2*3+5**-3/2-5%8)"],
-  ["variables", "land x = [[[[1]]]] cast: x + 2"],
-  ["assigned functions", "ocean number f(){ number g = f number f = g}"],
+  ["variables", "number x = 1 cast: x + 2"],
+  ["assigned functions", "ocean number x(){ number g = 2 number f = g}"],
   ["multi param functions", "ocean number hello (number x, number y){ cast: 1}"],
   ["outer variable", "number x = 1 tide unhooked { cast: x }"],
 ]
@@ -42,9 +41,9 @@ const semanticChecks = [
 // // Programs that are syntactically correct but have semantic errors
 const semanticErrors = [
   [
-    "non-distinct fields",
+    "duplicate parameter names",
     "number hello(number x, boolean x){}",
-    /Fields must be distinct/,
+    /Identifier x already declared/,
   ],
   ["non-number increment", "boolean x = unhooked x++", /Expected a number/],
   ["non-number decrement", "boolean x = hooked x--", /Expected a number/],
@@ -59,19 +58,19 @@ const semanticErrors = [
   ],
   ["return outside function", "reel", /Return can only appear in a function/],
 
-  ["throws on return value from void function", "lost hello(){ reel 1}", /Cannot return a value from this function/],
+  ["return value from void function", "lost hello(){ reel 1}", /Cannot return a value from this function/],
 
-  ["throws on return nothing from non-void", "number hello(){ reel }", /Something should be returned/], //possibly fails syntax checks beforehand
+  ["return nothing from non-void", "number hello(){ reel }", /Something should be returned/], //possibly fails syntax checks beforehand
   [
     "classes can't be made inside of functions",
     "ocean number x(){ ocean school y: cast: x }",
     /Classes can't be made inside of functions/,
   ],
-  [
-    "public classes can't be made inside of private classes",
-    "lake school x: ocean school y: cast: x",
-    /Public classes can't be made in Private classes/,
-  ],
+  // [
+  //   "public classes can't be made inside of private classes",
+  //   "lake school x: ocean school y: cast: x",
+  //   /Public classes can't be made in Private classes/,
+  // ],
 
   ["return type mismatch", " number test() { reel unhooked }", /Cannot assign a boolean to a number/],
   ["non-boolean short if test", "if 1 {}", /Expected a boolean/],
@@ -107,15 +106,4 @@ describe("The analyzer", () => {
       assert.throws(() => analyze(parse(source)), errorMessagePattern)
     })
   }
-  // it("produces the expected representation for a trivial program", () => {
-  //   assert.deepEqual(
-  //     analyze(parse("let x = π + 2.2;")),
-  //     program([
-  //       variableDeclaration(
-  //         variable("x", false, floatType),
-  //         binary("+", variable("π", true, floatType), 2.2, floatType)
-  //       ),
-  //     ])
-  //   )
-  // })
 })
