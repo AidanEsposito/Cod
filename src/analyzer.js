@@ -120,10 +120,6 @@ export default function analyze(match) {
     must(e?.kind.endsWith("Type"), "Type expected", at)
   }
 
-  function mustBeAnArrayType(t, at) {
-    must(t?.kind === "ArrayType", "Must be an array type", at)
-  }
-
   function mustNotContainBreakInFunction(at) {
     must(!context.inLoop, "Break can only appear in a loop", at)
   }
@@ -237,7 +233,6 @@ export default function analyze(match) {
   }
 
   function mustReturnSomething(f, at) {
-    console.log(f)
     must(f.type.returnType !== VOID, "Cannot return a value from this function", at)
   }
 
@@ -304,7 +299,7 @@ export default function analyze(match) {
 
     FuncDecl_function_private(_ocean, type, tag, _parenL, params, _parenR, block) {
       const functionType = core.functionType(
-        params.rep().map((p) => p.type),
+        undefined,
         type.rep()
       )
       const functionEntity = core.fun(tag.sourceString, functionType)
@@ -312,6 +307,7 @@ export default function analyze(match) {
       cannotAssignANumberToVoid(functionType, { at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
+      functionType.paramTypes = analyzedParams.map((p) => p.type)
       const body = block.rep()
       context = context.parent
       mustNotContainBreakInFunction({ at: tag })
@@ -324,12 +320,13 @@ export default function analyze(match) {
     },
 
     FuncDecl_function_public_no_params(_ocean, type, tag, _parenL, _parenR, block) {
-      const functionType = core.functionType([], type.rep())
+      const functionType = core.functionType([],  undefined, type.rep())
       const functionEntity = core.fun(tag.sourceString, functionType)
       cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
+      functionType.paramTypes = analyzedParams.map((p) => p.type)
       const body = block.rep()
       context = context.parent
       mustNotContainBreakInFunction({ at: tag })
@@ -337,12 +334,13 @@ export default function analyze(match) {
     },
 
     FuncDecl_function_private_no_params(_lake, type, tag, _parenL, _parenR, block) {
-      const functionType = core.functionType([], type.rep())
+      const functionType = core.functionType([], undefined, type.rep())
       const functionEntity = core.fun(tag.sourceString, functionType)
       cannotAssignANumberToVoid(functionType, { at: tag })
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
+      functionType.paramTypes = analyzedParams.map((p) => p.type)
       const body = block.rep()
       context = context.parent
       mustNotContainBreakInFunction({ at: tag })
