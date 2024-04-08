@@ -26,7 +26,7 @@ const semanticChecks = [
   ["short if", "if hooked { cast: 1}"],
   ["long if", "if hooked { cast: 1} else {cast: 3}"],
   ["elsif", "if hooked {cast: 1} else if hooked { cast: 0} else {cast: 3}"],
-
+  // ["type declaration with initialization", "int x = 42"],
   ["for in range", "stream i in 1 ..< 10{ cast: 0 }"],
   ["while", "tide hooked{ cast: 1} "],
   ["||", "boolean hello = unhooked cast: hooked || unhooked || hello"],
