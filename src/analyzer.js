@@ -583,7 +583,7 @@ export default function analyze(match) {
 
     TryStmt(_pitch, block, _catch) {
       const body = block.rep()
-      return core.tryStatement(body)
+      return core.tryCatchStatement(body)
     },
 
     Catch(_catch, _parenL, tag, _parenR, block) {
@@ -674,9 +674,9 @@ export default function analyze(match) {
     string(_) {
       return core.stringType
     },
-    land(_) {
-      return "land"
-    },
+    // land(_) {
+    //   return "land"
+    // },
     boolean(_) {
       return core.boolType
     },

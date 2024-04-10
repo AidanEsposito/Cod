@@ -2,7 +2,7 @@
 // accepts a program representation and returns the JavaScript translation
 // as a string.
 
-import { voidType, standardLibrary } from "./core.js"
+import { voidType, standardLibrary, classDeclaration, tryCatchStatement } from "./core.js"
 
 export default function generate(program) {
   // When generating code for statements, we'll accumulate the lines of
@@ -31,10 +31,16 @@ export default function generate(program) {
     Program(p) {
       p.statements.forEach(gen)
     },
-    VariableDeclaration(d) {
-      // We don't care about const vs. let in the generated code! The analyzer has
-      // already checked that we never updated a const, so let is always fine.
-      output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`)
+     FunctionDeclaration(d) {
+      output.push(`function ${gen(d.fun)}(${d.params.map(gen).join(", ")}) {`)
+      d.body.forEach(gen)
+      output.push("}")
+    },
+    Function(f) {
+      return targetName(f)
+    },
+    FunctionType(t) {
+      return `(${t.paramTypes.map(gen).join(", ")}) => ${gen(t.returnType)}`
     },
     TypeDeclaration(d) {
       // The only type declaration in Carlos is the struct! Becomes a JS class.
@@ -46,42 +52,44 @@ export default function generate(program) {
       output.push("}")
       output.push("}")
     },
+    ArrayType(t) {
+      return `${gen(t.baseType)}[]`
+    },
+     ArrayExpression(e) {
+      return `[${e.elements.map(gen).join(",")}]`
+    },
+    EmptyArray(e) {
+      return "[]"
+    },
     StructType(t) {
       return targetName(t)
     },
     Field(f) {
       return targetName(f)
     },
-    FunctionDeclaration(d) {
-      output.push(`function ${gen(d.fun)}(${d.params.map(gen).join(", ")}) {`)
-      d.body.forEach(gen)
-      output.push("}")
+     VariableDeclaration(d) {
+      // We don't care about const vs. let in the generated code! The analyzer has
+      // already checked that we never updated a const, so let is always fine.
+      output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`)
     },
     Variable(v) {
       // Standard library constants just get special treatment
       if (v === standardLibrary.π) return "Math.PI"
       return targetName(v)
     },
-    Function(f) {
-      return targetName(f)
+    ClassDeclaration(d) {
+      output.push(`class ${gen(d.name)} {`)
+      d.members.forEach(gen)
+      output.push("}")
     },
-    Increment(s) {
-      output.push(`${gen(s.variable)}++;`)
+    Class(c) {
+      return targetName(c)
     },
-    Decrement(s) {
-      output.push(`${gen(s.variable)}--;`)
+    ClassType(t) {
+      return targetName(t)
     },
     Assignment(s) {
       output.push(`${gen(s.target)} = ${gen(s.source)};`)
-    },
-    BreakStatement(s) {
-      output.push("break;")
-    },
-    ReturnStatement(s) {
-      output.push(`return ${gen(s.expression)};`)
-    },
-    ShortReturnStatement(s) {
-      output.push("return;")
     },
     IfStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
@@ -100,18 +108,6 @@ export default function generate(program) {
       s.consequent.forEach(gen)
       output.push("}")
     },
-    WhileStatement(s) {
-      output.push(`while (${gen(s.test)}) {`)
-      s.body.forEach(gen)
-      output.push("}")
-    },
-    RepeatStatement(s) {
-      // JS can only repeat n times if you give it a counter variable!
-      const i = targetName({ name: "i" })
-      output.push(`for (let ${i} = 0; ${i} < ${gen(s.count)}; ${i}++) {`)
-      s.body.forEach(gen)
-      output.push("}")
-    },
     ForRangeStatement(s) {
       const i = targetName(s.iterator)
       const op = s.op === "..." ? "<=" : "<"
@@ -126,6 +122,50 @@ export default function generate(program) {
     },
     Conditional(e) {
       return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(e.alternate)}))`
+    },
+    WhileStatement(s) {
+      output.push(`while (${gen(s.test)}) {`)
+      s.body.forEach(gen)
+      output.push("}")
+    },
+    RepeatStatement(s) {
+      // JS can only repeat n times if you give it a counter variable!
+      const i = targetName({ name: "i" })
+      output.push(`for (let ${i} = 0; ${i} < ${gen(s.count)}; ${i}++) {`)
+      s.body.forEach(gen)
+      output.push("}")
+    },
+    ReturnStatement(s) {
+      output.push(`return ${gen(s.expression)};`)
+    },
+    ShortReturnStatement(s) {
+      output.push("return;")
+    },
+    Increment(s) {
+      output.push(`${gen(s.variable)}++;`)
+    },
+    Decrement(s) {
+      output.push(`${gen(s.variable)}--;`)
+    },
+    BreakStatement(s) {
+      output.push("break;")
+    },
+    ContinueStatement(s) {
+      output.push("continue;")
+    },
+    tryCatchStatement(s) {
+      output.push(`try {`)
+      s.tryBlock.forEach(gen)
+      output.push(`} catch (e) {`)
+      s.catchBlock.forEach(gen)
+      output.push("}")
+    },
+    CatchStatement(s) {
+      output.push("} catch (e) {")
+      s.catchBlock.forEach(gen)
+    },
+    PrintStatement(s) {
+      output.push(`console.log(${s.args.map(gen).join(", ")});`)
     },
     BinaryExpression(e) {
       const op = { "==": "===", "!=": "!==" }[e.op] ?? e.op
@@ -147,12 +187,6 @@ export default function generate(program) {
     },
     SubscriptExpression(e) {
       return `${gen(e.array)}[${gen(e.index)}]`
-    },
-    ArrayExpression(e) {
-      return `[${e.elements.map(gen).join(",")}]`
-    },
-    EmptyArray(e) {
-      return "[]"
     },
     MemberExpression(e) {
       const object = gen(e.object)
