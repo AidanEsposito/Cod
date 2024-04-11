@@ -12,19 +12,17 @@
 //   {
 //     name: "small",
 //     source: `
-//       let x = 3 * 7;
-//       x++;
-//       x--;
-//       let y = true;
-//       y = 5 ** -x / -100 > - x || false;
-//       print((y && y) || false || (x*2) != 5);
+//       number x = 3 * 7
+//       x++
+//       x--
+//       boolean y = hooked
+//       cast: y && y || unhooked || (x*2) != 5
 //     `,
 //     expected: dedent`
 //       let x_1 = 21;
 //       x_1++;
 //       x_1--;
 //       let y_2 = true;
-//       y_2 = (((5 ** -(x_1)) / -(100)) > -(x_1));
 //       console.log(((y_2 && y_2) || ((x_1 * 2) !== 5)));
 //     `,
 //   },

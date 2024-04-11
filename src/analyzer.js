@@ -307,6 +307,7 @@ export default function analyze(match) {
       cannotAssignANumberToVoid(functionType, { at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
+      let analyzedParams = params.rep()
       functionType.paramTypes = analyzedParams.map((p) => p.type)
       const body = block.rep()
       context = context.parent
@@ -314,6 +315,7 @@ export default function analyze(match) {
       return core.functionDeclaration(
         tag.sourceString,
         functionEntity,
+        analyzedParams,
         params.rep(),
         body
       )
@@ -326,11 +328,12 @@ export default function analyze(match) {
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
+      let analyzedParams = params.rep()
       functionType.paramTypes = analyzedParams.map((p) => p.type)
       const body = block.rep()
       context = context.parent
       mustNotContainBreakInFunction({ at: tag })
-      return core.functionDeclaration(tag.sourceString, functionEntity, [], body)
+      return core.functionDeclaration(tag.sourceString, functionEntity, [], analyzedParams, body)
     },
 
     FuncDecl_function_private_no_params(_lake, type, tag, _parenL, _parenR, block) {
@@ -340,11 +343,12 @@ export default function analyze(match) {
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
+      let analyzedParams = params.rep()
       functionType.paramTypes = analyzedParams.map((p) => p.type)
       const body = block.rep()
       context = context.parent
       mustNotContainBreakInFunction({ at: tag })
-      return core.functionDeclaration(tag.sourceString, functionEntity, [], body)
+      return core.functionDeclaration(tag.sourceString, functionEntity, [], analyzedParams, body)
     },
 
     VarDecl_variable_public(_ocean, type, tag, _eq, exp) {
