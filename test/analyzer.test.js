@@ -17,6 +17,7 @@ const semanticChecks = [
   ["complex variable declarations", "number x = 1 number y = 2 cast: x + y"],
   ["variable print", "number x = 1 cast: x"],
   ["type array", "number[] x = [1, 2, 3]"],
+  //["type array with type and index", "number[] x = [1, 2, 3] cast: x[1]"],
   ["increment with variable", "number x = 10 x++"],
   ["decrement with variable", "number x = 10 x--"],
   ["increment and decrement", "number x = 10 x-- x++"],
@@ -73,6 +74,7 @@ const semanticChecks = [
 
 // // Programs that are syntactically correct but have semantic errors
 const semanticErrors = [
+
   [
     "duplicate parameter names",
     "number hello(number x, boolean x){}",
@@ -105,9 +107,9 @@ const semanticErrors = [
     /Classes can't be made inside of functions/,
   ],
   // [
-  //   "public classes can't be made inside of private classes",
+  //   "public classes can't be made inside of private classes", 
   //   "lake school x: ocean school y: cast: x",
-  //   /Public classes can't be made in Private classes/,
+  //   /Public classes can't be made inside of Private classes/,
   // ],
 
   ["return type mismatch", " number test() { reel unhooked }", /Cannot assign a boolean to a number/],

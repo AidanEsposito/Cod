@@ -89,31 +89,27 @@ export default function analyze(match) {
     must(e.type !== VOID, "Cannot assign a number to void", at)
   }
 
-  function mustHaveIntegerType(e, at) {
-    must(e.type === INT, "Expected a number", at)
-  }
-
   function mustHaveAnArrayType(e, at) {
     must(e.type?.kind === "ArrayType", "Expected an array", at)
   }
 
-  function mustHaveAStructType(e, at) {
-    must(e.type?.kind === "StructType", "Expected a struct", at)
-  }
+  // function mustHaveAStructType(e, at) {
+  //   must(e.type?.kind === "StructType", "Expected a struct", at)
+  // }
 
   function mustBothHaveTheSameType(e1, e2, at) {
     must(equivalent(e1.type, e2.type), "Operands do not have the same type", at)
   }
 
-  function mustAllHaveSameType(expressions, at) {
-    // Used to check the elements of an array expression, and the two
-    // arms of a conditional expression, among other scenarios.
-    must(
-      expressions.slice(1).every((e) => equivalent(e.type, expressions[0].type)),
-      "Not all elements have the same type",
-      at
-    )
-  }
+  // function mustAllHaveSameType(expressions, at) {
+  //   // Used to check the elements of an array expression, and the two
+  //   // arms of a conditional expression, among other scenarios.
+  //   must(
+  //     expressions.slice(1).every((e) => equivalent(e.type, expressions[0].type)),
+  //     "Not all elements have the same type",
+  //     at
+  //   )
+  // }
 
   function mustBeAType(e, at) {
     // This is a rather ugly hack
@@ -198,18 +194,18 @@ export default function analyze(match) {
     must(assignable(e.type, type), message, at)
   }
 
-  function mustNotBeReadOnly(e, at) {
-    must(!e.readOnly, `Cannot assign to constant ${e.name}`, at)
-  }
+  // function mustNotBeReadOnly(e, at) {
+  //   must(!e.readOnly, `Cannot assign to constant ${e.name}`, at)
+  // }
 
   function mustHaveDistinctFields(type, at) {
     const fieldNames = new Set(type.fields.map((f) => f.name))
     must(fieldNames.size === type.fields.length, "Fields must be distinct", at)
   }
 
-  function mustHaveMember(structType, field, at) {
-    must(structType.fields.map((f) => f.name).includes(field), "No such field", at)
-  }
+  // function mustHaveMember(structType, field, at) {
+  //   must(structType.fields.map((f) => f.name).includes(field), "No such field", at)
+  // }
 
   function mustBeInLoop(at) {
     must(context.inLoop, "Break can only appear in a loop", at)
@@ -590,10 +586,10 @@ export default function analyze(match) {
       return core.tryCatchStatement(body)
     },
 
-    Catch(_catch, _parenL, tag, _parenR, block) {
-      const body = block.rep()
-      return core.catchStatement(tag.sourceString, body)
-    },
+    // Catch(_catch, _parenL, tag, _parenR, block) {
+    //   const body = block.rep()
+    //   return core.catchStatement(tag.sourceString, body)
+    // },
 
     Type_id(id) {
       const entity = context.lookup(id.sourceString)

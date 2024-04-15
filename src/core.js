@@ -113,9 +113,9 @@ export function tryCatchStatement(tryBlock, catchBlock) {
   return { kind: "tryCatchStatement", tryBlock, catchBlock }
 }
 
-export function catchStatement() {
-  return { kind: "tryCatchStatement" }
-}
+// export function catchStatement() {
+//   return { kind: "tryCatchStatement" }
+// }
 
 export function printStatement(args) {
   return { kind: "printStatement", args }
