@@ -23,7 +23,7 @@ const semanticChecks = [
   ["increment and decrement", "number x = 10 x-- x++"],
   ["type declaration", 'number x = 1 boolean y = hooked string z = "hello"'],
   ["existing type identifier", "number x = 1 number y = x"],
-  
+  ["function call", "ocean number x() { cast: 1 } cast: x()"],
   ["try statement", "pitch { cast: 1 }"],
   ["try statement with catch", "pitch { cast: 1 } catch (Fail Exception) { cast: 2 }"],
   //["catch statement", "catch (Fail Exception) { cast: 2 }"],
@@ -31,17 +31,32 @@ const semanticChecks = [
   ["public function declaration", "ocean number x() { cast: 1 }"],
   ["public function declaration with return", "ocean number x() { reel 1 }"],
   ["public function declaration with argument", "ocean number x(number y) { cast: y }"],
-  ["public function declaration with multiple arguments", "ocean number x(number y, number z) { cast: y + z }"],
-  ["public function declaration with multiple arguments and return", "ocean number x(number y, number z) { reel y + z }"],
+  [
+    "public function declaration with multiple arguments",
+    "ocean number x(number y, number z) { cast: y + z }",
+  ],
+  [
+    "public function declaration with multiple arguments and return",
+    "ocean number x(number y, number z) { reel y + z }",
+  ],
   ["private function declaration", "lake number x() { cast: 1 }"],
   ["private function declaration with return", "lake number x() { reel 1 }"],
   ["private function declaration with argument", "lake number x(number y) { cast: y }"],
-  ["private function declaration with multiple arguments", "lake number x(number y, number z) { cast: y + z }"],
-  ["private function declaration with multiple arguments and return", "lake number x(number y, number z) { reel y + z }"],
+  [
+    "private function declaration with multiple arguments",
+    "lake number x(number y, number z) { cast: y + z }",
+  ],
+  [
+    "private function declaration with multiple arguments and return",
+    "lake number x(number y, number z) { reel y + z }",
+  ],
   ["long return", "boolean test(){ reel hooked}"],
   ["short return", "boolean test(){ reel hooked}"],
   ["return in nested if", "boolean f(){ if hooked{ reel hooked}}"],
-  ["return in nested if else", "boolean f(){ if hooked{ reel hooked} else { reel unhooked}}"],
+  [
+    "return in nested if else",
+    "boolean f(){ if hooked{ reel hooked} else { reel unhooked}}",
+  ],
   ["return in nested function", "boolean f(){ boolean g(){ reel hooked}}"],
   ["break in nested if", "tide unhooked{ if hooked{ snap}} "],
   ["type declaration with initialization", "number x = 42"],
@@ -70,11 +85,12 @@ const semanticChecks = [
   ["public classes", "ocean school x: cast: x"],
   ["private classes", "lake school x: ocean school y: cast: x"],
   ["outer variable", "number x = 1 tide unhooked { cast: x }"],
+  ["short return", "lost test() { reel }"],
+  ["struct fields", "boat x { number y }"],
 ]
 
 // // Programs that are syntactically correct but have semantic errors
 const semanticErrors = [
-
   [
     "duplicate parameter names",
     "number hello(number x, boolean x){}",
@@ -87,8 +103,16 @@ const semanticErrors = [
   ["identifier is not a type", "number x = 1 x y = 2", /Type expected/],
   ["must be assignable", "number a = hooked", /Cannot assign a boolean to a number/],
   ["non existing type identifier", "number x = y", /Identifier y not declared/],
-  ["redeclared public id", "ocean number z = 1 ocean number z = 1", /Identifier z already declared/],
-  ["redeclared private id", "lake number x = 1 lake number x = 1", /Identifier x already declared/],
+  [
+    "redeclared public id",
+    "ocean number z = 1 ocean number z = 1",
+    /Identifier z already declared/,
+  ],
+  [
+    "redeclared private id",
+    "lake number x = 1 lake number x = 1",
+    /Identifier x already declared/,
+  ],
   ["break outside loop", "snap", /Break can only appear in a loop/],
   ["continue outside loop", "flow", /Continue can only appear in a loop/],
   [
@@ -98,21 +122,33 @@ const semanticErrors = [
   ],
   ["return outside function", "reel", /Return can only appear in a function/],
 
-  ["return value from void function", "lost hello(){ reel 1}", /Cannot return a value from this function/],
+  [
+    "return value from void function",
+    "lost hello(){ reel 1}",
+    /Cannot return a value from this function/,
+  ],
 
-  ["return nothing from non-void", "number hello(){ reel }", /Something should be returned/], //possibly fails syntax checks beforehand
+  [
+    "return nothing from non-void",
+    "number hello(){ reel }",
+    /Something should be returned/,
+  ], //possibly fails syntax checks beforehand
   [
     "classes can't be made inside of functions",
     "ocean number x(){ ocean school y: cast: x }",
     /Classes can't be made inside of functions/,
   ],
   // [
-  //   "public classes can't be made inside of private classes", 
+  //   "public classes can't be made inside of private classes",
   //   "lake school x: ocean school y: cast: x",
   //   /Public classes can't be made inside of Private classes/,
   // ],
 
-  ["return type mismatch", " number test() { reel unhooked }", /Cannot assign a boolean to a number/],
+  [
+    "return type mismatch",
+    " number test() { reel unhooked }",
+    /Cannot assign a boolean to a number/,
+  ],
   ["non-boolean short if test", "if 1 {}", /Expected a boolean/],
   ["non-boolean if test", " if 1 {} else {}", /Expected a boolean/],
   ["non-boolean while test", "tide 1 {}", /Expected a boolean/],

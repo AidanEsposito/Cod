@@ -2,7 +2,7 @@
 // accepts a program representation and returns the JavaScript translation
 // as a string.
 
-import { voidType, standardLibrary, classDeclaration, tryCatchStatement } from "./core.js"
+import { voidType, standardLibrary, tryCatchStatement } from "./core.js"
 
 export default function generate(program) {
   // When generating code for statements, we'll accumulate the lines of
@@ -14,8 +14,8 @@ export default function generate(program) {
   // etc. This is because "switch", for example, is a legal name in Carlos,
   // but not in JS. So, the Carlos variable "switch" must become something
   // like "switch_1". We handle this by mapping each name to its suffix.
-  const targetName = (mapping => {
-    return entity => {
+  const targetName = ((mapping) => {
+    return (entity) => {
       if (!mapping.has(entity)) {
         mapping.set(entity, mapping.size + 1)
       }
@@ -23,7 +23,7 @@ export default function generate(program) {
     }
   })(new Map())
 
-  const gen = node => generators?.[node?.kind]?.(node) ?? node
+  const gen = (node) => generators?.[node?.kind]?.(node) ?? node
 
   const generators = {
     // Key idea: when generating an expression, just return the JS string; when
@@ -31,7 +31,7 @@ export default function generate(program) {
     Program(p) {
       p.statements.forEach(gen)
     },
-     FunctionDeclaration(d) {
+    FunctionDeclaration(d) {
       output.push(`function ${gen(d.fun)}(${d.params.map(gen).join(", ")}) {`)
       d.body.forEach(gen)
       output.push("}")
@@ -42,7 +42,7 @@ export default function generate(program) {
     FunctionType(t) {
       return `(${t.paramTypes.map(gen).join(", ")}) => ${gen(t.returnType)}`
     },
-    TypeDeclaration(d) {
+    StructDecl(d) {
       // The only type declaration in Carlos is the struct! Becomes a JS class.
       output.push(`class ${gen(d.type)} {`)
       output.push(`constructor(${d.type.fields.map(gen).join(",")}) {`)
@@ -55,7 +55,7 @@ export default function generate(program) {
     ArrayType(t) {
       return `${gen(t.baseType)}[]`
     },
-     ArrayExpression(e) {
+    ArrayExpression(e) {
       return `[${e.elements.map(gen).join(",")}]`
     },
     EmptyArray(e) {
@@ -67,7 +67,7 @@ export default function generate(program) {
     Field(f) {
       return targetName(f)
     },
-     VariableDeclaration(d) {
+    VariableDeclaration(d) {
       // We don't care about const vs. let in the generated code! The analyzer has
       // already checked that we never updated a const, so let is always fine.
       output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`)

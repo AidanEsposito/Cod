@@ -26,9 +26,9 @@ export function arrayExpression(elements) {
   return { kind: "arrayExpression", elements }
 }
 
-export function emptyArray(type) {
-  return { kind: "emptyArray", type }
-}
+// export function emptyArray(type) {
+//   return { kind: "emptyArray", type }
+// }
 
 export const voidType = { kind: "VoidType" }
 export const numberType = { kind: "NumberType" }
@@ -53,21 +53,21 @@ export function variable(name, readOnly, type) {
   return { kind: "Variable", name, readOnly, type }
 }
 
-export function classDeclaration(name, members) {
-  return { kind: "classDeclaration", name, members }
-}
+// export function classDeclaration(name, members) {
+//   return { kind: "classDeclaration", name, members }
+// }
 
-export function clas(params, body) {
-  return { kind: "Class", params, body }
-}
+// export function clas(params, body) {
+//   return { kind: "Class", params, body }
+// }
 
-export function classType(name) {
-  return { kind: "classType", name }
-}
+// export function classType(name) {
+//   return { kind: "classType", name }
+// }
 
-export function assignment(target, source) {
-  return { kind: "Assignment", target, source }
-}
+// export function assignment(target, source) {
+//   return { kind: "Assignment", target, source }
+// }
 
 export function ifStatement(test, consequent, alternate) {
   return { kind: "ifStatement", test, consequent, alternate }
@@ -121,10 +121,6 @@ export function printStatement(args) {
   return { kind: "printStatement", args }
 }
 
-export function IncDecStatement(op, operand) {
-  return { kind: "IncDecStatement", op, operand }
-}
-
 export function binary(op, left, right, type) {
   return { kind: "BinaryExpression", op, left, right, type }
 }
@@ -133,8 +129,7 @@ export function unary(op, operand, type) {
   return { kind: "UnaryExpression", op, operand, type }
 }
 
-export const standardLibrary = {
-}
+export const standardLibrary = {}
 
 export function functionCall(callee, args) {
   return { kind: "FunctionCall", callee, args, type: callee.type.returnType }

@@ -220,8 +220,8 @@ export default function analyze(match) {
   }
 
   function mustBeCallable(e, at) {
-    const callable = e?.kind === "StructType" || e.type?.kind === "FunctionType"
-    must(callable, "Call of non-function or non-constructor", at)
+    const callable = e?.kind === "Function"
+    must(callable, "Call of non-function", at)
   }
 
   function mustNotReturnAnything(f, at) {
@@ -242,20 +242,18 @@ export default function analyze(match) {
   }
 
   function mustNotBeInPrivateClass(at) {
-  let currentContext = context;
-  while (currentContext !== null) {
-    if (currentContext.function && currentContext.function.isPrivate) {
-      throw new Error("Public classes can't be made in Private classes");
+    let currentContext = context
+    while (currentContext !== null) {
+      if (currentContext.function && currentContext.function.isPrivate) {
+        throw new Error("Public classes can't be made in Private classes")
+      }
+      currentContext = currentContext.parent
     }
-    currentContext = currentContext.parent;
   }
-} 
 
   function mustNotBeInFunction(at) {
-      must(!context.function, "Classes can't be made inside of functions", at)
+    must(!context.function, "Classes can't be made inside of functions", at)
   }
-
-
 
   // Building the program representation will be done together with semantic
   // analysis and error checking. In Ohm, we do this with a semantics object
@@ -294,10 +292,7 @@ export default function analyze(match) {
     },
 
     FuncDecl_function_private(_ocean, type, tag, _parenL, params, _parenR, block) {
-      const functionType = core.functionType(
-        undefined,
-        type.rep()
-      )
+      const functionType = core.functionType(undefined, type.rep())
       const functionEntity = core.fun(tag.sourceString, functionType)
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       cannotAssignANumberToVoid(functionType, { at: tag })
@@ -317,57 +312,63 @@ export default function analyze(match) {
       )
     },
 
-    FuncDecl_function_public_no_params(_ocean, type, tag, _parenL, _parenR, block) {
-      const functionType = core.functionType([],  undefined, type.rep())
-      const functionEntity = core.fun(tag.sourceString, functionType)
-      cannotAssignANumberToVoid(functionType, { at: tag })
-      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      context.add(tag.sourceString, functionEntity)
-      context = context.newChildContext({ function: functionEntity })
-      let analyzedParams = params.rep()
-      functionType.paramTypes = analyzedParams.map((p) => p.type)
-      const body = block.rep()
-      context = context.parent
-      mustNotContainBreakInFunction({ at: tag })
-      return core.functionDeclaration(tag.sourceString, functionEntity, [], analyzedParams, body)
-    },
+    // FuncDecl_function_public_no_params(_ocean, type, tag, _parenL, _parenR, block) {
+    //   const functionType = core.functionType([], undefined, type.rep())
+    //   const functionEntity = core.fun(tag.sourceString, functionType)
+    //   cannotAssignANumberToVoid(functionType, { at: tag })
+    //   mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+    //   context.add(tag.sourceString, functionEntity)
+    //   context = context.newChildContext({ function: functionEntity })
+    //   let analyzedParams = params.rep()
+    //   functionType.paramTypes = analyzedParams.map((p) => p.type)
+    //   const body = block.rep()
+    //   context = context.parent
+    //   mustNotContainBreakInFunction({ at: tag })
+    //   return core.functionDeclaration(
+    //     tag.sourceString,
+    //     functionEntity,
+    //     [],
+    //     analyzedParams,
+    //     body
+    //   )
+    // },
 
-    FuncDecl_function_private_no_params(_lake, type, tag, _parenL, _parenR, block) {
-      const functionType = core.functionType([], undefined, type.rep())
-      const functionEntity = core.fun(tag.sourceString, functionType)
-      cannotAssignANumberToVoid(functionType, { at: tag })
-      mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      context.add(tag.sourceString, functionEntity)
-      context = context.newChildContext({ function: functionEntity })
-      let analyzedParams = params.rep()
-      functionType.paramTypes = analyzedParams.map((p) => p.type)
-      const body = block.rep()
-      context = context.parent
-      mustNotContainBreakInFunction({ at: tag })
-      return core.functionDeclaration(tag.sourceString, functionEntity, [], analyzedParams, body)
-    },
+    // FuncDecl_function_private_no_params(_lake, type, tag, _parenL, _parenR, block) {
+    //   const functionType = core.functionType([], undefined, type.rep())
+    //   const functionEntity = core.fun(tag.sourceString, functionType)
+    //   cannotAssignANumberToVoid(functionType, { at: tag })
+    //   mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
+    //   context.add(tag.sourceString, functionEntity)
+    //   context = context.newChildContext({ function: functionEntity })
+    //   let analyzedParams = params.rep()
+    //   functionType.paramTypes = analyzedParams.map((p) => p.type)
+    //   const body = block.rep()
+    //   context = context.parent
+    //   mustNotContainBreakInFunction({ at: tag })
+    //   return core.functionDeclaration(
+    //     tag.sourceString,
+    //     functionEntity,
+    //     [],
+    //     analyzedParams,
+    //     body
+    //   )
+    // },
 
     VarDecl_variable_public(_ocean, type, tag, _eq, exp) {
       const variable = core.variable(tag.sourceString, false, type.rep())
       mustNotAlreadyBeDeclared(variable.name, { at: tag })
       context.add(variable.name, variable)
-      if (exp.sourceString !== "") {
-        const expression = exp.rep()
-        mustBeAssignable(expression, { toType: variable.type }, { at: exp })
-        return core.variableDeclaration(variable, expression)
-      }
-      return core.variableDeclaration(variable, null)
+      const expression = exp.rep()
+      mustBeAssignable(expression, { toType: variable.type }, { at: exp })
+      return core.variableDeclaration(variable, expression)
     },
     VarDecl_variable_private(_lake, type, tag, _eq, exp) {
       const variable = core.variable(tag.sourceString, true, type.rep())
       mustNotAlreadyBeDeclared(variable.name, { at: tag })
       context.add(variable.name, variable)
-      if (exp.sourceString !== "") {
-        const expression = exp.rep()
-        mustBeAssignable(expression, { toType: variable.type }, { at: exp })
-        return core.variableDeclaration(variable, expression)
-      }
-      return core.variableDeclaration(variable, null)
+      const expression = exp.rep()
+      mustBeAssignable(expression, { toType: variable.type }, { at: exp })
+      return core.variableDeclaration(variable, expression)
     },
     VarDecl_type_public(_ocean, type, tag) {
       const variable = core.variable(tag.sourceString, false, type.rep())
@@ -382,8 +383,9 @@ export default function analyze(match) {
       return core.variableDeclaration(variable, null)
     },
 
-    TypeDecl(_boat, tag, _braceL, VarDecl, _braceR) {
-      const structType = core.structType(tag.sourceString, VarDecl.rep())
+    StructDecl(_boat, tag, _braceL, fields, _braceR) {
+      const fieldReps = fields.children.map((f) => f.rep())
+      const structType = core.structType(tag.sourceString, fieldReps)
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
       mustNotBeSelfContaining(structType, { at: tag })
       context.add(tag.sourceString, structType)
@@ -402,10 +404,14 @@ export default function analyze(match) {
 
     ClassDecl_class_private(_lake, school, tag, _colon) {
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      mustNotBeInFunction({ at: tag });
+      mustNotBeInFunction({ at: tag })
       const classType = core.structType(tag.sourceString, [])
       context.add(tag.sourceString, classType)
       return classType
+    },
+
+    Field(type, tag) {
+      return core.field(tag.sourceString, type.rep())
     },
 
     Type_array(baseType, _brackets) {
@@ -519,8 +525,13 @@ export default function analyze(match) {
       context.add(iterator.name, iterator)
       const body = block.rep()
       context = context.parent
-      return core.forRangeStatement(iterator, low.rep(), op.sourceString, high.rep(), body)
-
+      return core.forRangeStatement(
+        iterator,
+        low.rep(),
+        op.sourceString,
+        high.rep(),
+        body
+      )
     },
 
     ForStmt_for_in_collection(_stream, tag, _in, exp, block) {
@@ -598,8 +609,9 @@ export default function analyze(match) {
       return entity
     },
 
-    FuncCall(tag, _parenL, expList, _parenR) {
+    FuncCall(tag, parenL, expList, _parenR) {
       const callee = tag.rep()
+      console.log("Callee:", callee)
       mustBeCallable(callee, { at: tag })
       const exps = expList.asIteration().children
       const targetTypes =
@@ -622,9 +634,10 @@ export default function analyze(match) {
     },
 
     Primary_array(_open, expList, _close) {
-      let x = expList.asIteration().children.map((e) => e.rep())
-      x.type = core.arrayType(x[0].type)
-      return x
+      let elements = expList.asIteration().children.map((e) => e.rep())
+      let array = core.arrayExpression(elements)
+      array.type = core.arrayType(elements[0].type)
+      return array
     },
 
     Primary_unary(unaryOp, exp) {
@@ -643,13 +656,12 @@ export default function analyze(match) {
     },
 
     Param(type, tag) {
-      const paramName = tag.sourceString;
-      mustNotAlreadyBeDeclared(paramName, { at: tag });
-      const variable = core.variable(paramName, false, type.rep());
-      context.add(paramName, variable);
-      return variable;
+      const paramName = tag.sourceString
+      mustNotAlreadyBeDeclared(paramName, { at: tag })
+      const variable = core.variable(paramName, false, type.rep())
+      context.add(paramName, variable)
+      return variable
     },
-
 
     Primary_id(tag) {
       const entity = context.lookup(tag.sourceString)
@@ -691,4 +703,3 @@ export default function analyze(match) {
   })
   return builder(match).rep()
 }
-

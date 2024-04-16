@@ -1,7 +1,7 @@
 Cod{
     Program       =  Stmt+ 
     Stmt       	  =  FuncDecl
-                  |  TypeDecl
+                  |  StructDecl
                   |  VarDecl
                   |  ClassDecl
                   |  IfStmt
@@ -20,14 +20,11 @@ Cod{
                   | lake? Type tag            --type_private
                    
 
-    TypeDecl      = boat tag "{" VarDecl* "}"
-
-     FuncDecl     = ocean? Type tag "(" Params ")" Block           --function_public
+    FuncDecl      = ocean? Type tag "(" Params ")" Block           --function_public
                		| lake? Type tag "(" Params ")" Block              --function_private
-                  | ocean? Type tag "("")" Block               		  --function_public_no_params
-                  | lake? Type tag "("")" Block               			--function_private_no_params
                             
-    StructDecl     = boat tag "{" VarDecl* "}"                      -- struct
+    StructDecl    = boat tag "{" Field* "}"
+    Field         = Type tag
 
     ClassDecl      = ocean?  school tag ":"                               --class_public
                 	   | lake?  school  tag ":"                              --class_private

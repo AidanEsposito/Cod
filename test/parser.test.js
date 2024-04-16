@@ -25,7 +25,7 @@ const syntaxChecks = [
   ["if else statement test", "if(x > 2){ reel hooked}else{reel unhooked} "],
   ["public class defined correctly", "ocean school hello: int x = 2"],
   ["private class defined", "lake school hello: int x = 2"],
-  ["struct declaration works as intended", "boat x{int x = 2}"],
+  ["struct declaration works as intended", "boat x{int x}"],
   ["flow statement works properly", "if(x > 2){ flow }"],
 ]
 
