@@ -154,10 +154,8 @@ export default function analyze(match) {
       equivalent(fromType, toType) ||
       (fromType?.kind === "FunctionType" &&
         toType?.kind === "FunctionType" &&
-        // covariant in return types
         assignable(fromType.returnType, toType.returnType) &&
         fromType.paramTypes.length === toType.paramTypes.length &&
-        // contravariant in parameter types
         toType.paramTypes.every((t, i) => assignable(t, fromType.paramTypes[i])))
     )
   }
@@ -174,8 +172,8 @@ export default function analyze(match) {
         return "void"
       case "constType":
         return "const"
-      case "LetType":
-        return "let"
+      // case "LetType":
+      //   return "let"
       case "StructType":
         return type.name
       case "FunctionType":

@@ -58,6 +58,7 @@ const semanticChecks = [
     "boolean f(){ if hooked{ reel hooked} else { reel unhooked}}",
   ],
   ["return in nested function", "boolean f(){ boolean g(){ reel hooked}}"],
+  ["void function", "lost test() { reel }"],
   ["break in nested if", "tide unhooked{ if hooked{ snap}} "],
   ["type declaration with initialization", "number x = 42"],
   ["type declaration without initialization", "number x"],
