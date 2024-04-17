@@ -124,9 +124,8 @@ export default function analyze(match) {
     // Whether the struct type has a field of type type, directly or indirectly
     return structType.fields.some(
       (field) =>
-        field.type === type ||
-        (field.type?.kind === "StructType" && includesAsField(field.type, type))
-    )
+        field.type === type)
+         // || (field.type?.kind === "StructType" && includesAsField(field.type, type))
   }
 
   function mustNotBeSelfContaining(structType, at) {
@@ -139,24 +138,26 @@ export default function analyze(match) {
       t1 === t2 ||
       (t1?.kind === "ArrayType" &&
         t2?.kind === "ArrayType" &&
-        equivalent(t1.baseType, t2.baseType)) ||
-      (t1?.kind === "FunctionType" &&
-        t2?.kind === "FunctionType" &&
-        equivalent(t1.returnType, t2.returnType) &&
-        t1.paramTypes.length === t2.paramTypes.length &&
-        t1.paramTypes.every((t, i) => equivalent(t, t2.paramTypes[i])))
+        equivalent(t1.baseType, t2.baseType)) 
+      //   ||
+      // (t1?.kind === "FunctionType" &&
+      //   t2?.kind === "FunctionType" &&
+      //   equivalent(t1.returnType, t2.returnType) &&
+      //   t1.paramTypes.length === t2.paramTypes.length &&
+      //   t1.paramTypes.every((t, i) => equivalent(t, t2.paramTypes[i])))
     )
   }
 
   function assignable(fromType, toType) {
     return (
       toType == ANY ||
-      equivalent(fromType, toType) ||
-      (fromType?.kind === "FunctionType" &&
-        toType?.kind === "FunctionType" &&
-        assignable(fromType.returnType, toType.returnType) &&
-        fromType.paramTypes.length === toType.paramTypes.length &&
-        toType.paramTypes.every((t, i) => assignable(t, fromType.paramTypes[i])))
+      equivalent(fromType, toType) 
+      // ||
+      // (fromType?.kind === "FunctionType" &&
+      //   toType?.kind === "FunctionType" &&
+      //   assignable(fromType.returnType, toType.returnType) &&
+      //   fromType.paramTypes.length === toType.paramTypes.length &&
+      //   toType.paramTypes.every((t, i) => assignable(t, fromType.paramTypes[i])))
     )
   }
 
@@ -612,19 +613,20 @@ export default function analyze(match) {
       const callee = tag.rep()
       mustBeCallable(callee, { at: tag })
       const exps = expList.asIteration().children
-      const targetTypes =
-        callee?.kind === "StructType"
-          ? callee.fields.map((f) => f.type)
-          : callee.type.paramTypes
+      const targetTypes = callee.type.paramTypes
+        // callee?.kind === "StructType"
+        //   // ? callee.fields.map((f) => f.type)
+        //   callee.type.paramTypes
       mustHaveCorrectArgumentCount(exps.length, targetTypes.length, { at: parenL })
       const args = exps.map((exp, i) => {
         const arg = exp.rep()
         mustBeAssignable(arg, { toType: targetTypes[i] }, { at: exp })
         return arg
       })
-      return callee?.kind === "StructType"
-        ? core.constructorCall(callee, args)
-        : core.functionCall(callee, args)
+        return core.functionCall(callee, args)
+      // return callee?.kind === "StructType"
+      //   ? core.constructorCall(callee, args)
+      //   : core.functionCall(callee, args)
     },
 
     Primary_parens(_open, expression, _close) {

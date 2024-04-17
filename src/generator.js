@@ -209,3 +209,4 @@ export default function generate(program) {
   gen(program)
   return output.join("\n")
 }
+[]
