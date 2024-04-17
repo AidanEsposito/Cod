@@ -71,6 +71,8 @@ const semanticChecks = [
   ["elsif", "if hooked {cast: 1} else if hooked { cast: 0} else {cast: 3}"],
   ["logical operator if", "if hooked && hooked { cast: 1}"],
   ["correct argument count in function call", "ocean number x(){ cast: 1}"],
+  ["multiple argument function call", `ocean number x(number y, number z){ cast: 1}
+  x(1, 2)`],
   ["for in range", "stream i in 1 ..< 10{ cast: 0 }"],
   ["for in collection", "stream x in [1, 2, 3]{ cast: 0 }"],
   ["while", "tide hooked{ cast: 1} "],

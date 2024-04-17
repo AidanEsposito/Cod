@@ -9,58 +9,58 @@
 // }
 
 // const fixtures = [
-// //   {
-// //     name: "small",
-// //     source: `
-// //       number x = 3 * 7
-// //       x++
-// //       x--
-// //       boolean y = hooked
-// //       cast: y && y || unhooked || (x*2) != 5
-// //     `,
-// //     expected: dedent`
-// //       let x_1 = 21;
-// //       x_1++;
-// //       x_1--;
-// //       let y_2 = true;
-// //       console.log(((y_2 && y_2) || ((x_1 * 2) !== 5)));
-// //     `,
-// //   },
-// //   {
-// //     name: "if",
-// //     source: `
-// //       number x = 0
-// //       if x == 0 { cast: "1" }
-// //       if x == 0 { cast: 1 } else { cast: 2 }
-// //       if x == 0 { cast: 1 } else if x == 2 { cast: 3 }
-// //       if x == 0 { cast: 1 } else if x == 2 { cast: 3 } else { cast: 4 }
-// //     `,
-// //     expected: dedent`
-// //       let x_1 = 0;
-// //       if ((x_1 === 0)) {
-// //         console.log("1");
-// //       }
-// //       if ((x_1 === 0)) {
-// //         console.log(1);
-// //       } else {
-// //         console.log(2);
-// //       }
-// //       if ((x_1 === 0)) {
-// //         console.log(1);
-// //       } else
-// //         if ((x_1 === 2)) {
-// //           console.log(3);
-// //         }
-// //       if ((x_1 === 0)) {
-// //         console.log(1);
-// //       } else
-// //         if ((x_1 === 2)) {
-// //           console.log(3);
-// //         } else {
-// //           console.log(4);
-// //         }
-// //     `,
-// //   },
+//   {
+//     name: "small",
+//     source: `
+//       number x = 3 * 7
+//       x++
+//       x--
+//       boolean y = hooked
+//       cast: y && y || unhooked || (x*2) != 5
+//     `,
+//     expected: dedent`
+//       let x_1 = 21;
+//       x_1++;
+//       x_1--;
+//       let y_2 = true;
+//       console.log(((y_2 && y_2) || ((x_1 * 2) !== 5)));
+//     `,
+//   },
+//   {
+//     name: "if",
+//     source: `
+//       number x = 0
+//       if x == 0 { cast: "1" }
+//       if x == 0 { cast: 1 } else { cast: 2 }
+//       if x == 0 { cast: 1 } else if x == 2 { cast: 3 }
+//       if x == 0 { cast: 1 } else if x == 2 { cast: 3 } else { cast: 4 }
+//     `,
+//     expected: dedent`
+//       let x_1 = 0;
+//       if ((x_1 === 0)) {
+//         console.log("1");
+//       }
+//       if ((x_1 === 0)) {
+//         console.log(1);
+//       } else {
+//         console.log(2);
+//       }
+//       if ((x_1 === 0)) {
+//         console.log(1);
+//       } else
+//         if ((x_1 === 2)) {
+//           console.log(3);
+//         }
+//       if ((x_1 === 0)) {
+//         console.log(1);
+//       } else
+//         if ((x_1 === 2)) {
+//           console.log(3);
+//         } else {
+//           console.log(4);
+//         }
+//     `,
+//   },
 // //   {
 // //     name: "while",
 // //     source: `

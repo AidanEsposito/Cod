@@ -168,18 +168,15 @@ export default function analyze(match) {
         return "string"
       case "BoolType":
         return "boolean"
-      case "VoidType":
-        return "void"
-      case "constType":
-        return "const"
-      // case "LetType":
-      //   return "let"
-      case "StructType":
-        return type.name
-      case "FunctionType":
-        const paramTypes = type.paramTypes.map(typeDescription).join(", ")
-        const returnType = typeDescription(type.returnType)
-        return `(${paramTypes})->${returnType}`
+      // case "VoidType":   //CHECK
+      //   return "void"
+      // case "StructType":
+      //   return type.name
+      // case "FunctionType": {
+      //   const paramTypes = type.paramTypes.map(typeDescription).join(", ")
+      //   const returnType = typeDescription(type.returnType)
+      //   return `(${paramTypes})->${returnType}`
+      // }
       case "ArrayType":
         return `[${typeDescription(type.baseType)}]`
     }
@@ -239,15 +236,15 @@ export default function analyze(match) {
     must(argCount === paramCount, message, at)
   }
 
-  function mustNotBeInPrivateClass(at) {
-    let currentContext = context
-    while (currentContext !== null) {
-      if (currentContext.function && currentContext.function.isPrivate) {
-        throw new Error("Public classes can't be made in Private classes")
-      }
-      currentContext = currentContext.parent
-    }
-  }
+  // function mustNotBeInPrivateClass(at) {
+  //   let currentContext = context
+  //   while (currentContext !== null) {
+  //     if (currentContext.function && currentContext.function.isPrivate) {
+  //       throw new Error("Public classes can't be made in Private classes")
+  //     }
+  //     currentContext = currentContext.parent
+  //   }
+  // }
 
   function mustNotBeInFunction(at) {
     must(!context.function, "Classes can't be made inside of functions", at)
@@ -393,7 +390,7 @@ export default function analyze(match) {
 
     ClassDecl_class_public(_ocean, school, tag, _colon) {
       mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-      mustNotBeInPrivateClass({ at: tag })
+      // mustNotBeInPrivateClass({ at: tag })
       mustNotBeInFunction({ at: tag })
       const classType = core.structType(tag.sourceString, [])
       context.add(tag.sourceString, classType)
@@ -414,6 +411,10 @@ export default function analyze(match) {
 
     Type_array(baseType, _brackets) {
       return core.arrayType(baseType.rep())
+    },
+
+    Type_void(_lost) {
+      return core.voidType
     },
 
     Exp_or(left, _or, right) {
@@ -609,7 +610,6 @@ export default function analyze(match) {
 
     FuncCall(tag, parenL, expList, _parenR) {
       const callee = tag.rep()
-      console.log("Callee:", callee)
       mustBeCallable(callee, { at: tag })
       const exps = expList.asIteration().children
       const targetTypes =
@@ -675,9 +675,6 @@ export default function analyze(match) {
       return false
     },
 
-    lost(_lost) {
-      return core.voidType
-    },
     number(_) {
       return core.numberType
     },

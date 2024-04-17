@@ -13,6 +13,7 @@ Cod{
                   |  TryStmt
                   |  PrintStmt
                   |  IncDecStmt
+                  | FuncCall
                       
     VarDecl       = ocean? Type tag "=" Exp   --variable_public
                   | lake? Type  tag "=" Exp   --variable_private
