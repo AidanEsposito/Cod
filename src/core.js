@@ -53,22 +53,6 @@ export function variable(name, readOnly, type) {
   return { kind: "Variable", name, readOnly, type }
 }
 
-// export function classDeclaration(name, members) {
-//   return { kind: "classDeclaration", name, members }
-// }
-
-// export function clas(params, body) {
-//   return { kind: "Class", params, body }
-// }
-
-// export function classType(name) {
-//   return { kind: "classType", name }
-// }
-
-// export function assignment(target, source) {
-//   return { kind: "Assignment", target, source }
-// }
-
 export function ifStatement(test, consequent, alternate) {
   return { kind: "ifStatement", test, consequent, alternate }
 }
@@ -112,10 +96,6 @@ export const continueStatement = { kind: "continueStatement" }
 export function tryCatchStatement(tryBlock, catchBlock) {
   return { kind: "tryCatchStatement", tryBlock, catchBlock }
 }
-
-// export function catchStatement() {
-//   return { kind: "tryCatchStatement" }
-// }
 
 export function printStatement(args) {
   return { kind: "printStatement", args }

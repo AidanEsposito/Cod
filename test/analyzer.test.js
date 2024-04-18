@@ -17,7 +17,6 @@ const semanticChecks = [
   ["complex variable declarations", "number x = 1 number y = 2 cast: x + y"],
   ["variable print", "number x = 1 cast: x"],
   ["type array", "number[] x = [1, 2, 3]"],
-  //["type array with type and index", "number[] x = [1, 2, 3] cast: x[1]"],
   ["increment with variable", "number x = 10 x++"],
   ["decrement with variable", "number x = 10 x--"],
   ["increment and decrement", "number x = 10 x-- x++"],
@@ -26,7 +25,6 @@ const semanticChecks = [
   ["function call", "ocean number x() { cast: 1 } cast: x()"],
   ["try statement", "pitch { cast: 1 }"],
   ["try statement with catch", "pitch { cast: 1 } catch (Fail Exception) { cast: 2 }"],
-  //["catch statement", "catch (Fail Exception) { cast: 2 }"],
   ["catch empty block", "pitch { cast: 1 } catch (Fail Exception) { }"],
   ["public function declaration", "ocean number x() { cast: 1 }"],
   ["public function declaration with return", "ocean number x() { reel 1 }"],
@@ -57,6 +55,7 @@ const semanticChecks = [
     "return in nested if else",
     "boolean f(){ if hooked{ reel hooked} else { reel unhooked}}",
   ],
+  ["return in nested function", "boolean f(){ boolean g(){ reel hooked}}"],
   ["return in nested function", "boolean f(){ boolean g(){ reel hooked}}"],
   ["void function", "lost test() { reel }"],
   ["break in nested if", "tide unhooked{ if hooked{ snap}} "],
@@ -135,18 +134,12 @@ const semanticErrors = [
     "return nothing from non-void",
     "number hello(){ reel }",
     /Something should be returned/,
-  ], //possibly fails syntax checks beforehand
+  ], 
   [
     "classes can't be made inside of functions",
     "ocean number x(){ ocean school y: cast: x }",
     /Classes can't be made inside of functions/,
   ],
-  // [
-  //   "public classes can't be made inside of private classes",
-  //   "lake school x: ocean school y: cast: x",
-  //   /Public classes can't be made inside of Private classes/,
-  // ],
-
   [
     "return type mismatch",
     " number test() { reel unhooked }",
