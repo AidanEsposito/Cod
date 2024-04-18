@@ -2,7 +2,7 @@
 // accepts a program representation and returns the JavaScript translation
 // as a string.
 
-import { voidType, standardLibrary, tryCatchStatement } from "./core.js"
+import { voidType, standardLibrary, tryCatchStatement, incrementStatement, decrementStatement } from "./core.js"
 
 export default function generate(program) {
   // When generating code for statements, we'll accumulate the lines of
@@ -56,7 +56,7 @@ export default function generate(program) {
       return `${gen(t.baseType)}[]`
     },
     arrayExpression(e) {
-      return `[${e.elements.map(gen).join(",")}]`
+      return `[${e.elements.map(gen).join(", ")}]`
     },
     structType(t) {
       return targetName(t)
@@ -74,26 +74,13 @@ export default function generate(program) {
       if (v === standardLibrary.π) return "Math.PI"
       return targetName(v)
     },
-    // ClassDeclaration(d) {
-    //   output.push(`class ${gen(d.name)} {`)
-    //   d.members.forEach(gen)
-    //   output.push("}")
-    // },
-    // Class(c) {
-    //   return targetName(c)
-    // },
-    // ClassType(t) {
-    //   return targetName(t)
-    // },
-    // Assignment(s) {
-    //   output.push(`${gen(s.target)} = ${gen(s.source)};`)
-    // },
     ifStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
       s.consequent.forEach(gen)
-      if (s.alternate?.kind?.endsWith?.("IfStatement")) {
+      if (s?.alternate?.kind?.endsWith?.("ifStatement")) {
         output.push("} else")
-        gen(s.alternate)
+        gen(s?.alternate)
+        output.push("}")
       } else {
         output.push("} else {")
         s.alternate.forEach(gen)
@@ -103,6 +90,13 @@ export default function generate(program) {
     shortIfStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
       s.consequent.forEach(gen)
+      output.push("}")
+    },
+    nestedIfStatement(s) {
+      output.push(`if (${gen(s.test)}) {`)
+      s.consequent.forEach(gen)
+      output.push("} else {")
+      gen(s.alternate)
       output.push("}")
     },
     forRangeStatement(s) {
@@ -121,6 +115,7 @@ export default function generate(program) {
       return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(e.alternate)}))`
     },
     whileStatement(s) {
+      console.log(s)
       output.push(`while (${gen(s.test)}) {`)
       s.body.forEach(gen)
       output.push("}")
@@ -138,11 +133,11 @@ export default function generate(program) {
     shortReturnStatement(s) {
       output.push("return;")
     },
-    increment(s) {
-      output.push(`${gen(s.variable)}++;`)
+    incrementStatement(s) {
+      output.push(`${gen(s.operand)}++;`)
     },
-    decrement(s) {
-      output.push(`${gen(s.variable)}--;`)
+    decrementStatement(s) {
+      output.push(`${gen(s.operand)}--;`)
     },
     breakStatement(s) {
       output.push("break;")
@@ -157,12 +152,8 @@ export default function generate(program) {
       s.catchBlock.forEach(gen)
       output.push("}")
     },
-    // catchStatement(s) {
-    //   output.push("} catch (e) {")
-    //   s.catchBlock.forEach(gen)
-    // },
     printStatement(s) {
-      output.push(`console.log(${s.args.map(gen).join(", ")});`)
+      output.push(`console.log(${gen(s.args)});`)
     },
     binaryExpression(e) {
       const op = { "==": "===", "!=": "!==" }[e.op] ?? e.op
@@ -209,4 +200,3 @@ export default function generate(program) {
   gen(program)
   return output.join("\n")
 }
-[]

@@ -507,7 +507,7 @@ export default function analyze(match) {
       const consequent = block.rep()
       // Do NOT make a new context for the alternate!
       const alternate = trailingIfStatement.rep()
-      return core.ifStatement(test, consequent, alternate)
+      return core.nestedIfStatement(test, consequent, alternate)
     },
 
     IfStmt_if(_if, exp, block) {

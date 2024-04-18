@@ -1,5 +1,5 @@
 export function program(statements) {
-  return { kind: "Program", statements }
+  return { kind: "program", statements }
 }
 
 export function functionDeclaration(name, fun, params, body) {
@@ -42,7 +42,7 @@ export function structType(name, fields) {
 }
 
 export function field(name, type) {
-  return { kind: "Field", name, type }
+  return { kind: "field", name, type }
 }
 
 export function variableDeclaration(variable, initializer) {
@@ -50,7 +50,7 @@ export function variableDeclaration(variable, initializer) {
 }
 
 export function variable(name, readOnly, type) {
-  return { kind: "Variable", name, readOnly, type }
+  return { kind: "variable", name, readOnly, type }
 }
 
 export function ifStatement(test, consequent, alternate) {
@@ -58,7 +58,11 @@ export function ifStatement(test, consequent, alternate) {
 }
 
 export function shortIfStatement(test, consequent) {
-  return { kind: "ifStatement", test, consequent }
+  return { kind: "shortIfStatement", test, consequent }
+}
+
+export function nestedIfStatement(test, consequent, alternate) {
+  return { kind: "nestedIfStatement", test, consequent, alternate }
 }
 
 export function forRangeStatement(iterator, low, op, high, body) {
@@ -89,7 +93,7 @@ export function decrementStatement(operand) {
   return { kind: "decrementStatement", operand }
 }
 
-export const breakStatement = { kind: "BreakStatement" }
+export const breakStatement = { kind: "breakStatement" }
 
 export const continueStatement = { kind: "continueStatement" }
 
@@ -102,7 +106,7 @@ export function printStatement(args) {
 }
 
 export function binary(op, left, right, type) {
-  return { kind: "BinaryExpression", op, left, right, type }
+  return { kind: "binaryExpression", op, left, right, type }
 }
 
 export function unary(op, operand, type) {
