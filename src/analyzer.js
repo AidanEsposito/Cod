@@ -589,7 +589,7 @@ export default function analyze(match) {
 
     ContinueStmt_continue(_flow) {
       continuMustBeInLoop({ at: _flow })
-      return core.breakStatement()
+      return core.continueStatement
     },
 
     TryStmt(_pitch, block, _catch) {

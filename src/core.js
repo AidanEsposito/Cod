@@ -116,7 +116,7 @@ export function unary(op, operand, type) {
 export const standardLibrary = {}
 
 export function functionCall(callee, args) {
-  return { kind: "FunctionCall", callee, args, type: callee.type.returnType }
+  return { kind: "functionCall", callee, args, type: callee.type.returnType }
 }
 
 String.prototype.type = stringType

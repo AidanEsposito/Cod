@@ -36,22 +36,22 @@ export default function generate(program) {
       d.body.forEach(gen)
       output.push("}")
     },
-    function(f) {
+    Function(f) {
       return targetName(f)
     },
     functionType(t) {
       return `(${t.paramTypes.map(gen).join(", ")}) => ${gen(t.returnType)}`
     },
-    structDecl(d) {
-      // The only type declaration in Carlos is the struct! Becomes a JS class.
-      output.push(`class ${gen(d.type)} {`)
-      output.push(`constructor(${d.type.fields.map(gen).join(",")}) {`)
-      for (let field of d.type.fields) {
-        output.push(`this[${JSON.stringify(gen(field))}] = ${gen(field)};`)
-      }
-      output.push("}")
-      output.push("}")
-    },
+    // structDecl(d) {
+    //   // The only type declaration in Carlos is the struct! Becomes a JS class.
+    //   output.push(`class ${gen(d.type)} {`)
+    //   output.push(`constructor(${d.type.fields.map(gen).join(",")}) {`)
+    //   for (let field of d.type.fields) {
+    //     output.push(`this[${JSON.stringify(gen(field))}] = ${gen(field)};`)
+    //   }
+    //   output.push("}")
+    //   output.push("}")
+    // },
     arrayType(t) {
       return `${gen(t.baseType)}[]`
     },
@@ -115,7 +115,6 @@ export default function generate(program) {
     //   return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(e.alternate)}))`
     // },
     whileStatement(s) {
-      console.log(s)
       output.push(`while (${gen(s.test)}) {`)
       s.body.forEach(gen)
       output.push("}")
@@ -170,18 +169,18 @@ export default function generate(program) {
       }
       return `${e.op}(${operand})`
     },
-    emptyOptional(e) {
-      return "undefined"
-    },
-    subscriptExpression(e) {
-      return `${gen(e.array)}[${gen(e.index)}]`
-    },
-    memberExpression(e) {
-      const object = gen(e.object)
-      const field = JSON.stringify(gen(e.field))
-      const chain = e.op === "." ? "" : e.op
-      return `(${object}${chain}[${field}])`
-    },
+    // emptyOptional(e) {
+    //   return "undefined"
+    // },
+    // subscriptExpression(e) {
+    //   return `${gen(e.array)}[${gen(e.index)}]`
+    // },
+    // memberExpression(e) {
+    //   const object = gen(e.object)
+    //   const field = JSON.stringify(gen(e.field))
+    //   const chain = e.op === "." ? "" : e.op
+    //   return `(${object}${chain}[${field}])`
+    // },
     functionCall(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(c.args.map(gen))
@@ -192,9 +191,9 @@ export default function generate(program) {
       }
       output.push(`${targetCode};`)
     },
-    constructorCall(c) {
-      return `new ${gen(c.callee)}(${c.args.map(gen).join(", ")})`
-    },
+    // constructorCall(c) {
+    //   return `new ${gen(c.callee)}(${c.args.map(gen).join(", ")})`
+    // },
   }
 
   gen(program)

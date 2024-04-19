@@ -127,6 +127,31 @@ const fixtures = [
     `,
   },
   {
+    name: "continue and break",
+    source: `
+      number x = 0
+      tide x < 5 {
+        x++
+        if x == 3 { snap }
+        flow
+      }
+    `,
+    expected: dedent`
+      let x_1 = 0;
+      while ((x_1 < 5)) {
+        x_1++;
+        if ((x_1 === 3)) {
+          break;
+        }
+        continue;
+      }
+    `,
+
+  },
+
+  // 40, 43
+
+  {
     name: "functions",
     source: `
       number z = 0.5
@@ -149,8 +174,49 @@ const fixtures = [
       }
     `,
   },
+
+  //43
+
+  // {
+  //   name: "function types",
+  //   source: `
+  //     ocean number x(){
+  //       reel 1
+  //     }
+  //     ocean boolean y(){
+  //       reel unhooked
+  //     }
+  //     ocean string z(){
+  //       reel "hello"
+  //     }
+  //   `,
+  //   expected: dedent`
+  //     function x_1() {
+  //       return 1;
+  //     }
+  //     function y_2() {
+  //       return false;
+  //     }
+  //     function z_3() {
+  //       return "hello";
+  //     }
+  //   `,
+  // },
+  // {
+  //   name: "multiple parameter functions",
+  //   source: `
+  //     number f(number x, number y, number z){
+  //       reel x + y + z
+  //     }
+  //   `,
+  //   expected: dedent`
+  //     function f_1(x_2, y_3, z_4) {
+  //       return ((x_2 + y_3) + z_4);
+  //     }
+  //   `,
+  // },
   {
-    name: "arrays",
+    name: "array types",
     source: `
       number[] a = [1, 2, 3]
       boolean[] b = [hooked, unhooked, hooked]
@@ -162,6 +228,22 @@ const fixtures = [
       let c_3 = ["hello", "world"];
     `,
   },
+
+  //46-53
+
+  // {
+  // name: "structs",
+  //   source: `
+  //     boat x{ number a }
+  //   `,
+  //   expected: dedent`
+  //     class x_1 {
+  //       constructor(a_2) {
+  //         this.a = a_2;
+  //       }
+  //     }
+  //   `,
+  //   },
   {
     name: "for loops",
     source: `
@@ -181,6 +263,27 @@ const fixtures = [
       }
     `,
   },
+
+  // 185-192
+
+  // {
+  //   name: "function calls",
+  //   source: `
+  //     ocean number x(){
+  //       cast: 1
+  //     }
+  //     x()
+  //   `,
+  //   expected: dedent`
+  //     function x_1() {
+  //       console.log(1);
+  //     }
+  //     x_1();
+  //   `,
+  // },
+
+  //148-152
+
   // {
   //   name: "try catch",
   //   source: `
@@ -199,7 +302,8 @@ const fixtures = [
   //       console.log("not working");
   //     }
   //   `,
-  // }
+  // },
+
 ]
 
 describe("The code generator", () => {
