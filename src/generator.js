@@ -111,28 +111,28 @@ export default function generate(program) {
       s.body.forEach(gen)
       output.push("}")
     },
-    conditional(e) {
-      return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(e.alternate)}))`
-    },
+    // conditional(e) {
+    //   return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(e.alternate)}))`
+    // },
     whileStatement(s) {
       console.log(s)
       output.push(`while (${gen(s.test)}) {`)
       s.body.forEach(gen)
       output.push("}")
     },
-    repeatStatement(s) {
-      // JS can only repeat n times if you give it a counter variable!
-      const i = targetName({ name: "i" })
-      output.push(`for (let ${i} = 0; ${i} < ${gen(s.count)}; ${i}++) {`)
-      s.body.forEach(gen)
-      output.push("}")
-    },
+    // repeatStatement(s) {
+    //   // JS can only repeat n times if you give it a counter variable!
+    //   const i = targetName({ name: "i" })
+    //   output.push(`for (let ${i} = 0; ${i} < ${gen(s.count)}; ${i}++) {`)
+    //   s.body.forEach(gen)
+    //   output.push("}")
+    // },
     returnStatement(s) {
       output.push(`return ${gen(s.expression)};`)
     },
-    shortReturnStatement(s) {
-      output.push("return;")
-    },
+    // shortReturnStatement(s) {
+    //   output.push("return;")
+    // },
     incrementStatement(s) {
       output.push(`${gen(s.operand)}++;`)
     },

@@ -181,6 +181,25 @@ const fixtures = [
       }
     `,
   },
+  // {
+  //   name: "try catch",
+  //   source: `
+  //     number x = 0
+  //     pitch {
+  //       cast: "working"
+  //     } catch (FailedException) {
+  //       cast: "not working"
+  //     }
+  //   `,
+  //   expected: dedent`
+  //     let x_1 = 0;
+  //     try {
+  //       console.log("working");
+  //     } catch (FailedException) {
+  //       console.log("not working");
+  //     }
+  //   `,
+  // }
 ]
 
 describe("The code generator", () => {
