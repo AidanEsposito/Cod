@@ -229,7 +229,25 @@ const fixtures = [
     `,
   },
 
-  //46-53
+
+  //Something to do with how EXP is defined in cod.ohm
+  // {
+  //   name: "unary operators",
+  //   source: `
+  //     number x = 3
+  //     cast: -x
+  //     cast: !hooked
+  //   `,
+  //   expected: dedent`
+  //     let x_1 = 3;
+  //     console.log(-x_1);
+  //     console.log(!true);
+  //   `,
+
+
+  // },
+
+  //62
 
   // {
   // name: "structs",
@@ -284,25 +302,25 @@ const fixtures = [
 
   //148-152
 
-  // {
-  //   name: "try catch",
-  //   source: `
-  //     number x = 0
-  //     pitch {
-  //       cast: "working"
-  //     } catch (FailedException) {
-  //       cast: "not working"
-  //     }
-  //   `,
-  //   expected: dedent`
-  //     let x_1 = 0;
-  //     try {
-  //       console.log("working");
-  //     } catch (FailedException) {
-  //       console.log("not working");
-  //     }
-  //   `,
-  // },
+  {
+    name: "try catch",
+    source: `
+      number x = 0
+      pitch {
+        cast: "working"
+      } catch (FailedException) {
+        cast: "not working"
+      }
+    `,
+    expected: dedent`
+      let x_1 = 0;
+      try {
+        console.log("working");
+      } catch (FailedException) {
+        console.log("not working");
+      }
+    `,
+  },
 
 ]
 

@@ -110,7 +110,7 @@ export function binary(op, left, right, type) {
 }
 
 export function unary(op, operand, type) {
-  return { kind: "UnaryExpression", op, operand, type }
+  return { kind: "unaryExpression", op, operand, type }
 }
 
 export const standardLibrary = {}

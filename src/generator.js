@@ -160,13 +160,6 @@ export default function generate(program) {
     },
     unaryExpression(e) {
       const operand = gen(e.operand)
-      if (e.op === "some") {
-        return operand
-      } else if (e.op === "#") {
-        return `${operand}.length`
-      } else if (e.op === "random") {
-        return `((a=>a[~~(Math.random()*a.length)])(${operand}))`
-      }
       return `${e.op}(${operand})`
     },
     // emptyOptional(e) {
