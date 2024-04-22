@@ -2,6 +2,8 @@
 
 <strong style="font-size: larger;">COD</strong>
 
+By: Aidan Esposito, Troy Wu, Khalid Stewart
+
 Have you ever loved fishing but can't bring your fishing love to the world of programming? 
 This problem can be seen all around the world with fishermen and woman struggling to make
 their dreams a reality. Now, today is the day to make those dreams come true. Introducing 

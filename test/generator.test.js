@@ -231,21 +231,19 @@ const fixtures = [
 
 
   //Something to do with how EXP is defined in cod.ohm
-  // {
-  //   name: "unary operators",
-  //   source: `
-  //     number x = 3
-  //     cast: -x
-  //     cast: !hooked
-  //   `,
-  //   expected: dedent`
-  //     let x_1 = 3;
-  //     console.log(-x_1);
-  //     console.log(!true);
-  //   `,
-
-
-  // },
+  {         
+    name: "unary operators",
+    source: `
+      number x = 3
+      cast: -x
+      cast: !hooked
+    `,
+    expected: dedent`
+      let x_1 = 3;
+      console.log(-x_1);
+      console.log(!true);
+    `,
+  },
 
   //62
 
