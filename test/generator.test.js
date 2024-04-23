@@ -280,23 +280,21 @@ const fixtures = [
 
   // 185-192
 
-  // {
-  //   name: "function calls",
-  //   source: `
-  //     ocean number x(){
-  //       cast: 1
-  //     }
-  //     x()
-  //   `,
-  //   expected: dedent`
-  //     function x_1() {
-  //       console.log(1);
-  //     }
-  //     x_1();
-  //   `,
-  // },
-
-  //148-152
+  {
+    name: "function calls",
+    source: `
+      ocean number x(){
+        cast: 1
+      }
+      x()
+    `,
+    expected: dedent`
+      function x_1() {
+        console.log(1);
+      }
+      x_1();
+    `,
+  },
 
   {
     name: "try catch",
