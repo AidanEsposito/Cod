@@ -2,7 +2,13 @@
 // accepts a program representation and returns the JavaScript translation
 // as a string.
 
-import { voidType, standardLibrary, tryCatchStatement, incrementStatement, decrementStatement } from "./core.js"
+import {
+  voidType,
+  standardLibrary,
+  tryCatchStatement,
+  incrementStatement,
+  decrementStatement,
+} from "./core.js"
 
 export default function generate(program) {
   // When generating code for statements, we'll accumulate the lines of
@@ -146,9 +152,9 @@ export default function generate(program) {
     },
     tryCatchStatement(s) {
       output.push(`try {`)
-      s.tryBlock.forEach(gen)
+      s.body.forEach(gen)
       output.push(`} catch (e) {`)
-      s.catchBlock.forEach(gen)
+      s.handler.forEach(gen)
       output.push("}")
     },
     printStatement(s) {

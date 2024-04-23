@@ -122,10 +122,8 @@ export default function analyze(match) {
 
   function includesAsField(structType, type) {
     // Whether the struct type has a field of type type, directly or indirectly
-    return structType.fields.some(
-      (field) =>
-        field.type === type)
-         // || (field.type?.kind === "StructType" && includesAsField(field.type, type))
+    return structType.fields.some((field) => field.type === type)
+    // || (field.type?.kind === "StructType" && includesAsField(field.type, type))
   }
 
   function mustNotBeSelfContaining(structType, at) {
@@ -138,7 +136,7 @@ export default function analyze(match) {
       t1 === t2 ||
       (t1?.kind === "ArrayType" &&
         t2?.kind === "ArrayType" &&
-        equivalent(t1.baseType, t2.baseType)) 
+        equivalent(t1.baseType, t2.baseType))
       //   ||
       // (t1?.kind === "FunctionType" &&
       //   t2?.kind === "FunctionType" &&
@@ -150,8 +148,7 @@ export default function analyze(match) {
 
   function assignable(fromType, toType) {
     return (
-      toType == ANY ||
-      equivalent(fromType, toType) 
+      toType == ANY || equivalent(fromType, toType)
       // ||
       // (fromType?.kind === "FunctionType" &&
       //   toType?.kind === "FunctionType" &&
@@ -592,15 +589,11 @@ export default function analyze(match) {
       return core.continueStatement
     },
 
-    TryStmt(_pitch, block, _catch) {
+    TryStmt(_pitch, block, _catch, handlerBlock) {
       const body = block.rep()
-      return core.tryCatchStatement(body)
+      const handler = handlerBlock.rep()
+      return core.tryCatchStatement(body, handler)
     },
-
-    // Catch(_catch, _parenL, tag, _parenR, block) {
-    //   const body = block.rep()
-    //   return core.catchStatement(tag.sourceString, body)
-    // },
 
     Type_id(id) {
       const entity = context.lookup(id.sourceString)
@@ -614,16 +607,16 @@ export default function analyze(match) {
       mustBeCallable(callee, { at: tag })
       const exps = expList.asIteration().children
       const targetTypes = callee.type.paramTypes
-        // callee?.kind === "StructType"
-        //   // ? callee.fields.map((f) => f.type)
-        //   callee.type.paramTypes
+      // callee?.kind === "StructType"
+      //   // ? callee.fields.map((f) => f.type)
+      //   callee.type.paramTypes
       mustHaveCorrectArgumentCount(exps.length, targetTypes.length, { at: parenL })
       const args = exps.map((exp, i) => {
         const arg = exp.rep()
         mustBeAssignable(arg, { toType: targetTypes[i] }, { at: exp })
         return arg
       })
-        return core.functionCall(callee, args)
+      return core.functionCall(callee, args)
       // return callee?.kind === "StructType"
       //   ? core.constructorCall(callee, args)
       //   : core.functionCall(callee, args)

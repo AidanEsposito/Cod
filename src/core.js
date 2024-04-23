@@ -97,8 +97,8 @@ export const breakStatement = { kind: "breakStatement" }
 
 export const continueStatement = { kind: "continueStatement" }
 
-export function tryCatchStatement(tryBlock, catchBlock) {
-  return { kind: "tryCatchStatement", tryBlock, catchBlock }
+export function tryCatchStatement(body, handler) {
+  return { kind: "tryCatchStatement", body, handler }
 }
 
 export function printStatement(args) {

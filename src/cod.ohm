@@ -64,8 +64,7 @@ Cod{
 
     ContinueStmt     = flow                                        -- continue
 
-    TryStmt        = pitch Block Catch* //possibly add finally
-    Catch          = catch "(" tag* ")" Block
+    TryStmt        = pitch Block catch Block
 
     Params         = ListOf<Param, ","> 
     Param          = Type tag

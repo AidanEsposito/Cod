@@ -25,9 +25,8 @@ const semanticChecks = [
   ["type declaration", 'number x = 1 boolean y = hooked string z = "hello"'],
   ["existing type identifier", "number x = 1 number y = x"],
   ["function call", "ocean number x() { cast: 1 } cast: x()"],
-  ["try statement", "pitch { cast: 1 }"],
-  ["try statement with catch", "pitch { cast: 1 } catch (Fail Exception) { cast: 2 }"],
-  ["catch empty block", "pitch { cast: 1 } catch (Fail Exception) { }"],
+  ["try statement with catch", "pitch { cast: 1 } catch { cast: 2 }"],
+  ["catch empty block", "pitch { cast: 1 } catch { }"],
   ["public function declaration", "ocean number x() { cast: 1 }"],
   ["public function declaration with return", "ocean number x() { reel 1 }"],
   ["public function declaration with argument", "ocean number x(number y) { cast: y }"],
@@ -72,8 +71,11 @@ const semanticChecks = [
   ["elsif", "if hooked {cast: 1} else if hooked { cast: 0} else {cast: 3}"],
   ["logical operator if", "if hooked && hooked { cast: 1}"],
   ["correct argument count in function call", "ocean number x(){ cast: 1}"],
-  ["multiple argument function call", `ocean number x(number y, number z){ cast: 1}
-  x(1, 2)`],
+  [
+    "multiple argument function call",
+    `ocean number x(number y, number z){ cast: 1}
+  x(1, 2)`,
+  ],
   ["for in range", "stream i in 1 ..< 10{ cast: 0 }"],
   ["for in collection", "stream x in [1, 2, 3]{ cast: 0 }"],
   ["while", "tide hooked{ cast: 1} "],
@@ -137,7 +139,7 @@ const semanticErrors = [
     "return nothing from non-void",
     "number hello(){ reel }",
     /Something should be returned/,
-  ], 
+  ],
   [
     "classes can't be made inside of functions",
     "ocean number x(){ ocean school y: cast: x }",

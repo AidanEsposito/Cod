@@ -9,7 +9,7 @@ function dedent(s) {
 }
 
 const fixtures = [
-    {
+  {
     name: "vardec test",
     source: `number x = 3 * 7`,
     expected: dedent`
@@ -146,7 +146,6 @@ const fixtures = [
         continue;
       }
     `,
-
   },
 
   // 40, 43
@@ -229,9 +228,8 @@ const fixtures = [
     `,
   },
 
-
   //Something to do with how EXP is defined in cod.ohm
-  {         
+  {
     name: "unary operators",
     source: `
       number x = 3
@@ -240,8 +238,8 @@ const fixtures = [
     `,
     expected: dedent`
       let x_1 = 3;
-      console.log(-x_1);
-      console.log(!true);
+      console.log(-(x_1));
+      console.log(!(true));
     `,
   },
 
@@ -306,7 +304,7 @@ const fixtures = [
       number x = 0
       pitch {
         cast: "working"
-      } catch (FailedException) {
+      } catch {
         cast: "not working"
       }
     `,
@@ -314,12 +312,11 @@ const fixtures = [
       let x_1 = 0;
       try {
         console.log("working");
-      } catch (FailedException) {
+      } catch (e) {
         console.log("not working");
       }
     `,
   },
-
 ]
 
 describe("The code generator", () => {

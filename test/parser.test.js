@@ -18,10 +18,7 @@ const syntaxChecks = [
   ["return statement test", "if(x==2){ reel x}"],
   ["continue statement test", "if(x==2) { flow }"],
   ["null statement test", "int x = sock"],
-  [
-    "try and catch exceptions work properly",
-    "pitch{ int x = 2/0} catch(Number Exception){ cast: x == 2 }",
-  ],
+  ["try and catch exceptions work properly", "pitch{ int x = 2/0} catch{ cast: x == 2 }"],
   ["if else statement test", "if(x > 2){ reel hooked}else{reel unhooked} "],
   ["public class defined correctly", "ocean school hello: int x = 2"],
   ["private class defined", "lake school hello: int x = 2"],
