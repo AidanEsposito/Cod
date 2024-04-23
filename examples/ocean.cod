@@ -1,0 +1,4 @@
+ocean number x(){
+   cast: 1
+}
+x()

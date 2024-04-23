@@ -45,9 +45,6 @@ export default function generate(program) {
     Function(f) {
       return targetName(f)
     },
-    functionType(t) {
-      return `(${t.paramTypes.map(gen).join(", ")}) => ${gen(t.returnType)}`
-    },
     // structDecl(d) {
     //   // The only type declaration in Carlos is the struct! Becomes a JS class.
     //   output.push(`class ${gen(d.type)} {`)
@@ -58,18 +55,15 @@ export default function generate(program) {
     //   output.push("}")
     //   output.push("}")
     // },
-    arrayType(t) {
-      return `${gen(t.baseType)}[]`
-    },
     arrayExpression(e) {
       return `[${e.elements.map(gen).join(", ")}]`
     },
-    structType(t) {
-      return targetName(t)
-    },
-    field(f) {
-      return targetName(f)
-    },
+    // structType(t) {
+    //   return targetName(t)
+    // },
+    // field(f) {
+    //   return targetName(f)
+    // },
     variableDeclaration(d) {
       // We don't care about const vs. let in the generated code! The analyzer has
       // already checked that we never updated a const, so let is always fine.
@@ -181,14 +175,14 @@ export default function generate(program) {
     //   return `(${object}${chain}[${field}])`
     // },
     functionCall(c) {
-      const targetCode = standardFunctions.has(c.callee)
-        ? standardFunctions.get(c.callee)(c.args.map(gen))
-        : `${gen(c.callee)}(${c.args.map(gen).join(", ")})`
+      const targetCode = `${gen(c.callee)}(${c.args.map(gen).join(", ")})`
       // Calls in expressions vs in statements are handled differently
+      console.log(c.callee.type.returnType)
       if (c.callee.type.returnType !== voidType) {
         return targetCode
+      } else {
+        output.push(`${targetCode};`)
       }
-      output.push(`${targetCode};`)
     },
     // constructorCall(c) {
     //   return `new ${gen(c.callee)}(${c.args.map(gen).join(", ")})`
