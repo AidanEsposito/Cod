@@ -168,7 +168,7 @@ export default function generate(program) {
     // subscriptExpression(e) {
     //   return `${gen(e.array)}[${gen(e.index)}]`
     // },
-    // memberExpression(e) {
+    // memberExpression(e) {f
     //   const object = gen(e.object)
     //   const field = JSON.stringify(gen(e.field))
     //   const chain = e.op === "." ? "" : e.op

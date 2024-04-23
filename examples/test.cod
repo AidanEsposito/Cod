@@ -1,0 +1,5 @@
+number x = 3 * 7
+x++
+x--
+boolean y = hooked
+cast: y && y || unhooked || (x*2) != 5

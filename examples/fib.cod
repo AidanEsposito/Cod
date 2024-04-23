@@ -1,19 +1,22 @@
-string number_term = "Enter the number of terms:"
-int n1 = 0
-int n2 = 1
-int nextTerm
-
-cast: "Fibonacci Series:"
-
-stream i in 1 < 10{
-	cast: n1
-    nextTerm = n1 + n2
-    n1 = n2
-    n2 = nextTerm
+ocean number fibonacci(n){
+    reel fibHelper(a, b, count) {
+        if count == 0 {
+        reel a
+    }
+    reel fibHelper(b, a + b, count - 1)
+    }(0, 1, n)
 }
 
-cast(n1)
-nextTerm = n1 + n2
-n1 = n2
-n2 = nextTerm
+ocean number printFibonacci(count){
+    if count <= 0{
+        cast: "Please enter a postive number"
+        reel
+    }
 
+    cast: "Fibonacci Sequence:"
+    stream i in 0 ..< count {
+        cast: fibonacci(i)
+    }
+}
+
+printFibonacci(10)

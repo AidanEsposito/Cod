@@ -305,12 +305,11 @@ const fixtures = [
     `,
     expected: dedent`
       function x_1() {
+        console.log(1);
       }
       x_1();
     `,
   },
-
-  //148-152
 
   {
     name: "try catch",

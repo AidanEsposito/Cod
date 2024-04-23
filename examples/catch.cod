@@ -1,6 +1,6 @@
 number x = 0
 pitch {
   cast: "working"
-} catch (FailedException) {
+} catch {
   cast: "not working"
 }

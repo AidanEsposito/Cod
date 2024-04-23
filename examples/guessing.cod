@@ -1,0 +1,29 @@
+//Variable to track state (1 or 2)
+
+number state = 3
+
+//Variable to track correct guesses
+
+number correctGuesses = 0
+
+//Function to play game
+
+ocean number playGame(number guess){
+    state--
+    cast: "Current State:" state
+
+    if guess == state{
+        cast: "Correct guess!"
+        correctGuesses++
+    } else {
+        cast: "Incorrect guess!"
+    }
+}
+
+cast: "Lets play a game!"
+number[] guesses = [1, 2, 1, 2, 1]
+stream i in 1 ..< 5{
+    playGame(guesses[i])
+}
+
+cast: "You guessed correctly" correctGuesses "Out of 5 times."

@@ -1,0 +1,9 @@
+ocean number Hundred(){
+    number x = 0
+    stream i in 1 <.. 100{
+        cast: x
+        x++
+    }
+}
+
+Hundred()
