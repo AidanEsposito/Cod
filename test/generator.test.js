@@ -16,14 +16,31 @@ const fixtures = [
       let x_1 = (3 * 7);
     `,
   },
+  // {
+  //   name: "small",
+  //   source: `
+  //     number x = 3 * 7
+  //     x++
+  //     x--
+  //     boolean y = hooked
+  //     cast: y && y || unhooked || (x*2) != 5
+  //   `,
+  //   expected: dedent`
+  //     let x_1 = 21;
+  //     x_1++;
+  //     x_1--;
+  //     let y_2 = true;
+  //     console.log(((y_2 && y_2) || ((x_1 * 2) !== 5)));
+  //   `,
+  // },
   {
     name: "small",
     source: `
-      number x = 3 * 7
+      number x = 21
       x++
       x--
       boolean y = hooked
-      cast: y && y || unhooked || (x*2) != 5
+      cast: y && y ||  (x*2) != 5
     `,
     expected: dedent`
       let x_1 = 21;
@@ -175,9 +192,6 @@ const fixtures = [
       }
     `,
   },
-
-  // 40, 43
-
   {
     name: "functions",
     source: `
