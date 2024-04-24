@@ -62,6 +62,17 @@ const fixtures = [
     `,
   },
   {
+    name: "if else empty",
+    source: `number x = 0 if x == 0 { } else { }
+    `,
+    expected: dedent`
+      let x_1 = 0;
+      if ((x_1 === 0)) {
+      } else {
+      }
+    `,
+  },
+  {
     name: "if else if",
     source: `
       number x = 0
@@ -95,6 +106,23 @@ const fixtures = [
           console.log(4);
         }
         }
+    `,
+  },
+  {
+    name: "if else with alternate if",
+    source: `
+      number x = 0
+      if x == 0 { cast: 1 } else { if x == 2 { cast: 3 } }
+    `,
+    expected: dedent`
+      let x_1 = 0;
+      if ((x_1 === 0)) {
+        console.log(1);
+      } else {
+        if ((x_1 === 2)) {
+          console.log(3);
+        }
+      }
     `,
   },
   {
@@ -173,47 +201,6 @@ const fixtures = [
       }
     `,
   },
-
-  //43
-
-  // {
-  //   name: "function types",
-  //   source: `
-  //     ocean number x(){
-  //       reel 1
-  //     }
-  //     ocean boolean y(){
-  //       reel unhooked
-  //     }
-  //     ocean string z(){
-  //       reel "hello"
-  //     }
-  //   `,
-  //   expected: dedent`
-  //     function x_1() {
-  //       return 1;
-  //     }
-  //     function y_2() {
-  //       return false;
-  //     }
-  //     function z_3() {
-  //       return "hello";
-  //     }
-  //   `,
-  // },
-  // {
-  //   name: "multiple parameter functions",
-  //   source: `
-  //     number f(number x, number y, number z){
-  //       reel x + y + z
-  //     }
-  //   `,
-  //   expected: dedent`
-  //     function f_1(x_2, y_3, z_4) {
-  //       return ((x_2 + y_3) + z_4);
-  //     }
-  //   `,
-  // },
   {
     name: "array types",
     source: `
@@ -227,8 +214,6 @@ const fixtures = [
       let c_3 = ["hello", "world"];
     `,
   },
-
-  //Something to do with how EXP is defined in cod.ohm
   {
     name: "unary operators",
     source: `
@@ -242,22 +227,6 @@ const fixtures = [
       console.log(!(true));
     `,
   },
-
-  //62
-
-  // {
-  // name: "structs",
-  //   source: `
-  //     boat x{ number a }
-  //   `,
-  //   expected: dedent`
-  //     class x_1 {
-  //       constructor(a_2) {
-  //         this.a = a_2;
-  //       }
-  //     }
-  //   `,
-  //   },
   {
     name: "for loops",
     source: `
@@ -277,8 +246,6 @@ const fixtures = [
       }
     `,
   },
-
-  // 185-192
 
   {
     name: "function calls in expressions",
@@ -305,7 +272,6 @@ const fixtures = [
     `,
     expected: dedent`
       function x_1() {
-        console.log(1);
       }
       x_1();
     `,

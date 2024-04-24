@@ -77,7 +77,7 @@ export default function generate(program) {
     ifStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
       s.consequent.forEach(gen)
-      if (s?.alternate?.kind?.endsWith?.("ifStatement")) {
+      if (s.alternate?.kind?.endsWith?.("ifStatement")) {
         output.push("} else")
         gen(s?.alternate)
         output.push("}")
