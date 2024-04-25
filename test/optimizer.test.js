@@ -59,6 +59,7 @@ const tests = [
   ["removes right false from ||", or(less(x, 1), false), less(x, 1)],
   ["removes left true from &&", and(true, less(x, 1)), less(x, 1)],
   ["removes right true from &&", and(less(x, 1), true), less(x, 1)],
+  ["removes left true from &&", and(true, less(x, 1)), less(x, 1)],
   ["type is preserved", core.variable("x", false, core.numberType), x],
   ["type is preserved in binary", core.binary("+", x, 1, core.numberType), core.binary("+", x, 1, core.numberType)],
 //   ["removes x=x at beginning", program([core.assignment(x, x), xpp]), program([xpp])],

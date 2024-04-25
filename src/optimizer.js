@@ -48,10 +48,10 @@ const optimizers = {
     d.initializer = optimize(d.initializer)
     return d
   },
-  typeDeclaration(d) {
-    d.type = optimize(d.type)
-    return d
-  },
+  // typeDeclaration(d) {
+  //   d.type = optimize(d.type)
+  //   return d
+  // },
   ifStatement(s) {
     s.test = optimize(s.test)
     s.consequent = s.consequent.flatMap(optimize)
@@ -101,18 +101,15 @@ const optimizers = {
     s.iterator = optimize(s.iterator)
     s.collection = optimize(s.collection)
     s.body = s.body.flatMap(optimize)
-    if (s.collection?.kind === "EmptyArray") {
-      return []
-    }
     return s
   },
    returnStatement(s) {
     s.expression = optimize(s.expression)
     return s
   },
-  shortReturnStatement(s) {
-    return s
-  },
+  // shortReturnStatement(s) {
+  //   return s
+  // },
   incrementStatement(s) {
     s.operand = optimize(s.operand)
     return s
@@ -128,12 +125,7 @@ const optimizers = {
     e.op = optimize(e.op)
     e.left = optimize(e.left)
     e.right = optimize(e.right)
-    if (e.op === "??") {
-      // Coalesce Empty Optional Unwraps
-      if (e.left?.kind === "EmptyOptional") {
-        return e.right
-      }
-    } else if (e.op === "&&") {
+    if (e.op === "&&") {
       // Optimize boolean constants in && and ||
       if (e.left === true) return e.right
       else if (e.right === true) return e.left
