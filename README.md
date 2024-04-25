@@ -102,6 +102,35 @@ Static Checking in Cod:
 
 *mustNotBeInAPrivateClass: Makes sure public classes can't be made in private classes.
 
+Generation Examples: 
+
+name: "if else",
+    source: `
+      number x = 0
+      if x == 0 { cast: 1 } else { cast: 2 }
+    `,
+    expected: dedent`
+      let x_1 = 0;
+      if ((x_1 === 0)) {
+        console.log(1);
+      } else {
+        console.log(2);
+      }
+
+
+ name: "unary operators",
+    source: `
+      number x = 3
+      cast: -x
+      cast: !hooked
+    `,
+    expected: dedent`
+      let x_1 = 3;
+      console.log(-(x_1));
+      console.log(!(true));
+
+
+
 Language Website: https://aidanesposito.github.io
 
 Language Grammer: https://replit.com/join/ucuhxipcdf-aidanesposito
