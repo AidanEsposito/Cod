@@ -124,14 +124,10 @@ const optimizers = {
   breakStatement(s) {
     return s
   },
-  binary(e) {
-    console.log(e)
+  binaryExpression(e) {
     e.op = optimize(e.op)
-    console.log(e.op)
     e.left = optimize(e.left)
-    console.log(e.left)
     e.right = optimize(e.right)
-    console.log(e.right)
     if (e.op === "??") {
       // Coalesce Empty Optional Unwraps
       if (e.left?.kind === "EmptyOptional") {
@@ -172,7 +168,7 @@ const optimizers = {
     }
     return e
   },
-  unary(e) {
+  unaryExpression(e) {
     e.op = optimize(e.op)
     e.operand = optimize(e.operand)
     if (e.operand.constructor === Number) {

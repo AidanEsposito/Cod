@@ -59,6 +59,8 @@ const tests = [
   ["removes right false from ||", or(less(x, 1), false), less(x, 1)],
   ["removes left true from &&", and(true, less(x, 1)), less(x, 1)],
   ["removes right true from &&", and(less(x, 1), true), less(x, 1)],
+  ["type is preserved", core.variable("x", false, core.numberType), x],
+  ["type is preserved in binary", core.binary("+", x, 1, core.numberType), core.binary("+", x, 1, core.numberType)],
 //   ["removes x=x at beginning", program([core.assignment(x, x), xpp]), program([xpp])],
 //   ["removes x=x at end", program([xpp, core.assignment(x, x)]), program([xpp])],
 //   ["removes x=x in middle", program([xpp, assign(x, x), xpp]), program([xpp, xpp])],
@@ -77,28 +79,6 @@ const tests = [
   ["optimizes in functions", program([numberFun(return1p1)]), program([numberFun(return2)])],
 //   ["optimizes in subscripts", sub(a, onePlusTwo), sub(a, 3)],
   ["optimizes in array literals", array(0, onePlusTwo, 9), array(0, 3, 9)],
-//   ["optimizes in arguments", callIdentity([times(3, 5)]), callIdentity([15])],
-//   [
-//     "passes through nonoptimizable constructs",
-//     ...Array(2).fill([
-//       core.program([core.shortReturnStatement()]),
-//       core.variableDeclaration("x", true, "z"),
-//       core.typeDeclaration([core.field("x", core.numberType)]),
-//       core.assignment(x, core.binary("*", x, "z")),
-//       core.assignment(x, core.unary("not", x)),
-//       core.constructorCall(identity, core.memberExpression(x, ".", "f")),
-//       core.variableDeclaration("q", false, core.emptyArray(core.floatType)),
-//       core.variableDeclaration("r", false, core.emptyOptional(core.numberType)),
-//       core.whileStatement(true, [core.breakStatement]),
-//       core.repeatStatement(5, [core.returnStatement(1)]),
-//       core.conditional(x, 1, 2),
-//       unwrapElse(some(x), 7),
-//       core.ifStatement(x, [], []),
-//       core.shortIfStatement(x, []),
-//       core.forRangeStatement(x, 2, "..<", 5, []),
-//       core.forStatement(x, array(1, 2, 3), []),
-//     ]),
-//   ],
 ]
 
 describe("The optimizer", () => {
