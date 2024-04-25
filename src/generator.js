@@ -71,21 +71,15 @@ export default function generate(program) {
     },
     variable(v) {
       // Standard library constants just get special treatment
-      if (v === standardLibrary.π) return "Math.PI"
+      // if (v === standardLibrary.π) return "Math.PI"
       return targetName(v)
     },
     ifStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
       s.consequent.forEach(gen)
-      if (s.alternate?.kind?.endsWith?.("ifStatement")) {
-        output.push("} else")
-        gen(s?.alternate)
-        output.push("}")
-      } else {
-        output.push("} else {")
-        s.alternate.forEach(gen)
-        output.push("}")
-      }
+      output.push("} else {")
+      s.alternate.forEach(gen)
+      output.push("}")
     },
     shortIfStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
@@ -95,9 +89,8 @@ export default function generate(program) {
     nestedIfStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
       s.consequent.forEach(gen)
-      output.push("} else {")
+      output.push("} else")
       gen(s.alternate)
-      output.push("}")
     },
     forRangeStatement(s) {
       const i = targetName(s.iterator)
@@ -177,7 +170,6 @@ export default function generate(program) {
     functionCall(c) {
       const targetCode = `${gen(c.callee)}(${c.args.map(gen).join(", ")})`
       // Calls in expressions vs in statements are handled differently
-      console.log(c.callee.type.returnType)
       if (c.callee.type.returnType !== voidType) {
         return targetCode
       } else {
