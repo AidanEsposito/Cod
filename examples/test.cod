@@ -1,5 +1,11 @@
-number x = 3 * 7
-x++
-x--
-boolean y = hooked
-cast: y && y || unhooked || (x*2) != 5
+// number x = 3 * 7
+// x++
+// x--
+// boolean y = hooked
+// cast: y && y || unhooked || (x*2) != 5
+
+if hooked { 
+    cast: hooked
+} else if hooked {
+    cast: unhooked
+}
