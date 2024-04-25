@@ -45,25 +45,9 @@ export default function generate(program) {
     Function(f) {
       return targetName(f)
     },
-    // structDecl(d) {
-    //   // The only type declaration in Carlos is the struct! Becomes a JS class.
-    //   output.push(`class ${gen(d.type)} {`)
-    //   output.push(`constructor(${d.type.fields.map(gen).join(",")}) {`)
-    //   for (let field of d.type.fields) {
-    //     output.push(`this[${JSON.stringify(gen(field))}] = ${gen(field)};`)
-    //   }
-    //   output.push("}")
-    //   output.push("}")
-    // },
     arrayExpression(e) {
       return `[${e.elements.map(gen).join(", ")}]`
     },
-    // structType(t) {
-    //   return targetName(t)
-    // },
-    // field(f) {
-    //   return targetName(f)
-    // },
     variableDeclaration(d) {
       // We don't care about const vs. let in the generated code! The analyzer has
       // already checked that we never updated a const, so let is always fine.
@@ -112,19 +96,9 @@ export default function generate(program) {
       s.body.forEach(gen)
       output.push("}")
     },
-    // repeatStatement(s) {
-    //   // JS can only repeat n times if you give it a counter variable!
-    //   const i = targetName({ name: "i" })
-    //   output.push(`for (let ${i} = 0; ${i} < ${gen(s.count)}; ${i}++) {`)
-    //   s.body.forEach(gen)
-    //   output.push("}")
-    // },
     returnStatement(s) {
       output.push(`return ${gen(s.expression)};`)
     },
-    // shortReturnStatement(s) {
-    //   output.push("return;")
-    // },
     incrementStatement(s) {
       output.push(`${gen(s.operand)}++;`)
     },
@@ -155,18 +129,6 @@ export default function generate(program) {
       const operand = gen(e.operand)
       return `${e.op}(${operand})`
     },
-    // emptyOptional(e) {
-    //   return "undefined"
-    // },
-    // subscriptExpression(e) {
-    //   return `${gen(e.array)}[${gen(e.index)}]`
-    // },
-    // memberExpression(e) {f
-    //   const object = gen(e.object)
-    //   const field = JSON.stringify(gen(e.field))
-    //   const chain = e.op === "." ? "" : e.op
-    //   return `(${object}${chain}[${field}])`
-    // },
     functionCall(c) {
       const targetCode = `${gen(c.callee)}(${c.args.map(gen).join(", ")})`
       // Calls in expressions vs in statements are handled differently
@@ -176,9 +138,6 @@ export default function generate(program) {
         output.push(`${targetCode};`)
       }
     },
-    // constructorCall(c) {
-    //   return `new ${gen(c.callee)}(${c.args.map(gen).join(", ")})`
-    // },
   }
 
   gen(program)
