@@ -99,10 +99,9 @@ const fixtures = [
       let x_1 = 0;
       if ((x_1 === 0)) {
         console.log(1);
-      } else {
+      } else
       if ((x_1 === 2)) {
           console.log(3);
-      }
       }
     `,
   },
@@ -116,12 +115,11 @@ const fixtures = [
       let x_1 = 0;
       if ((x_1 === 0)) {
         console.log(1);
-      } else {
+      } else
       if ((x_1 === 2)) {
           console.log(3);
         } else {
           console.log(4);
-        }
         }
     `,
   },
@@ -247,6 +245,9 @@ const fixtures = [
       stream i in 1..< 50 {
         cast: "working"
       }
+      stream i in 1...50 {
+        cast: "working"
+      }
       stream j in [10, 20, 30] {
         cast: "working"
       }
@@ -255,7 +256,10 @@ const fixtures = [
       for (let i_1 = 1; i_1 < 50; i_1++) {
         console.log("working");
       }
-      for (let j_2 of [10, 20, 30]) {
+      for (let i_2 = 1; i_2 <= 50; i_2++) {
+        console.log("working");
+      }
+      for (let j_3 of [10, 20, 30]) {
         console.log("working");
       }
     `,
