@@ -19,12 +19,12 @@ describe("The compiler", () => {
   })
   it("accepts the analyzed option", done => {
     const compiled = compile(sampleProgram, "analyzed")
-    assert(compiled.kind === "Program")
+    assert(compiled.kind === "program")
     done()
   })
   it("accepts the optimized option", done => {
     const compiled = compile(sampleProgram, "optimized")
-    assert(compiled.kind === "Program")
+    assert(compiled.kind === "program")
     done()
   })
   it("generates js code when given the js option", done => {
