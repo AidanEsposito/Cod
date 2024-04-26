@@ -52,14 +52,10 @@ const optimizers = {
   //   d.type = optimize(d.type)
   //   return d
   // },
-  ifStatement(s) {
+   ifStatement(s) {
     s.test = optimize(s.test)
     s.consequent = s.consequent.flatMap(optimize)
-    if (s.alternate?.kind?.endsWith?.("ifStatement")) {
-      s.alternate = optimize(s.alternate)
-    } else {
-      s.alternate = s.alternate.flatMap(optimize)
-    }
+    s.alternate = s.alternate.flatMap(optimize)
     if (s.test.constructor === Boolean) {
       return s.test ? s.consequent : s.alternate
     }
@@ -160,15 +156,9 @@ const optimizers = {
     }
     return e
   },
-  unaryExpression(e) {
-    e.op = optimize(e.op)
+    unaryExpression(e) {
     e.operand = optimize(e.operand)
-    if (e.operand.constructor === Number) {
-      if (e.op === "-") {
-        return -e.operand
-      }
-    }
-    return e
+    return -e.operand
   },
   functionCall(c) {
     c.callee = optimize(c.callee)
