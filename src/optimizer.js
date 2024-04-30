@@ -1,28 +1,3 @@
-// export default function optimize(node) {
-//   return node
-// }
-
-// The optimizer module exports a single function, optimize(node), to perform
-// machine-independent optimizations on the analyzed semantic representation.
-//
-// The only optimizations supported here are:
-//
-//   - assignments to self (x = x) turn into no-ops
-//   - constant folding
-//   - some strength reductions (+0, -0, *0, *1, etc.)
-//   - turn references to built-ins true and false to be literals
-//   - remove all disjuncts in || list after literal true
-//   - remove all conjuncts in && list after literal false
-//   - while-false becomes a no-op
-//   - repeat-0 is a no-op
-//   - for-loop over empty array is a no-op
-//   - for-loop with low > high is a no-op
-//   - if-true and if-false reduce to only the taken arm
-//
-// The optimizer also replaces token references with their actual values,
-// since the original token line and column numbers are no longer needed.
-// This simplifies code generation.
-
 import * as core from "./core.js"
 
 export default function optimize(node) {
@@ -48,10 +23,6 @@ const optimizers = {
     d.initializer = optimize(d.initializer)
     return d
   },
-  // typeDeclaration(d) {
-  //   d.type = optimize(d.type)
-  //   return d
-  // },
    ifStatement(s) {
     s.test = optimize(s.test)
     s.consequent = s.consequent.flatMap(optimize)
@@ -72,7 +43,6 @@ const optimizers = {
   whileStatement(s) {
     s.test = optimize(s.test)
     if (s.test === false) {
-      // while false is a no-op
       return []
     }
     s.body = s.body.flatMap(optimize)
@@ -103,9 +73,6 @@ const optimizers = {
     s.expression = optimize(s.expression)
     return s
   },
-  // shortReturnStatement(s) {
-  //   return s
-  // },
   incrementStatement(s) {
     s.operand = optimize(s.operand)
     return s

@@ -21,25 +21,25 @@ Cod{
                   | lake? Type tag            --type_private
                    
 
-    FuncDecl      = ocean? Type tag "(" Params ")" Block           --function_public
+    FuncDecl      = ocean? Type tag "(" Params ")" Block             --function_public
                		| lake? Type tag "(" Params ")" Block              --function_private
                             
     StructDecl    = boat tag "{" Field* "}"
     Field         = Type tag
 
-    ClassDecl      = ocean?  school tag ":"                               --class_public
-                	   | lake?  school  tag ":"                              --class_private
+    ClassDecl     = ocean?  school tag ":"                              --class_public
+                	| lake?  school  tag ":"                              --class_private
                 
-    Type        	 = Type "[]"                                       -- array
-                        | lost                                              -- void     
-                        | number    -- number
-                        | string
-                        | land
-                        | boolean
-                        | StructDecl
-                        | tag                                                 -- id
+    Type        	= Type "[]"                                           -- array
+                  | lost                                                -- void     
+                  | number                                              -- number
+                  | string
+                  | land
+                  | boolean
+                  | StructDecl
+                  | tag                                                 -- id
         
-    Block       	 = "{" Stmt* "}"
+    Block       	= "{" Stmt* "}"
 
 	 PrintStmt 	    = cast ":" Exp
 
@@ -48,21 +48,21 @@ Cod{
    IncStmt        = Primary_id "++"
    DecStmt        = Primary_id "--"
    
-    IfStmt      	 = if Exp Block else Block                           --if_else
-                        | if Exp Block else IfStmt                          --nested_if
-                        | if Exp Block                                      -- if     
+    IfStmt      	= if Exp Block else Block                             --if_else
+                  | if Exp Block else IfStmt                            --nested_if
+                  | if Exp Block                                        -- if     
 
-    ForStmt       = stream tag in Exp ("..." | "..<") Exp Block           -- for_in_range
-                	    | stream tag in Exp Block                                          -- for_in_collection
+    ForStmt       = stream tag in Exp ("..." | "..<") Exp Block         -- for_in_range
+                	| stream tag in Exp Block                             -- for_in_collection
 
-    WhileStmt      = tide Exp Block                                   -- while    
+    WhileStmt      = tide Exp Block                                     -- while    
 
-    ReturnStmt     = reel Exp                                -- long
-                   | reel                                    -- short
+    ReturnStmt     = reel Exp                                           -- long
+                   | reel                                               -- short
 
-    BreakStmt      = snap                                             -- break
+    BreakStmt      = snap                                               -- break
 
-    ContinueStmt     = flow                                        -- continue
+    ContinueStmt   = flow                                               -- continue
 
     TryStmt        = pitch Block catch Block
 
@@ -85,52 +85,52 @@ Cod{
     Term        	 = Term ("*" | "/" | "%") Factor                     -- multi_divide_modulo
                 	 | Factor
 
-    Factor      	 = Primary "**" Factor                                  --exponent 
+    Factor      	 = Primary "**" Factor                               --exponent 
                    | FuncCall                                
                 	 | Primary
 
     FuncCall       =  Primary_id "(" ListOf<Exp, ","> ")"
 
-    Primary          = "(" Exp ")"                                       -- parens
-                     | "[" NonemptyListOf<Exp, ","> "]"                  -- array
-                     | tag                                               --id
-                     | ("-" | "!")? Primary                     --unary
-                     | sock                                     --null                 
-                     | hooked                                              --true
-                     | unhooked                                             --false
-                     | fish
-                     | stringlit                                        			 --string
+    Primary        = "(" Exp ")"                                      -- parens
+                   | "[" NonemptyListOf<Exp, ","> "]"                 -- array
+                   | tag                                              --id
+                   | ("-" | "!")? Primary                             --unary
+                   | sock                                             --null                 
+                   | hooked                                           --true
+                   | unhooked                                         --false
+                   | fish
+                   | stringlit                                        --string
                      
 
-    relop 			 = "<=" | "<" | ">=" | ">" | "==" | "!=" 
+    relop 			   = "<=" | "<" | ">=" | ">" | "==" | "!=" 
 
     land         	 = "land" ~idchar       //let
-    number 			   = "number" ~idchar          //number
-    string			 = "string" ~idchar       //string
-    boolean 	  = "boolean" ~idchar       //boolean
-    boat      	     = "boat" ~idchar     //struct
+    number 			   = "number" ~idchar     //number
+    string			   = "string" ~idchar     //string
+    boolean 	     = "boolean" ~idchar    //boolean
+    boat      	   = "boat" ~idchar       //struct
     function    	 = "function" ~idchar   //function
-    if         	     = "if" ~idchar       //if
-    else       	     = "else" ~idchar     //else
-    stream           = "stream" ~idchar   //for
-    snap      	     = "snap"   ~idchar   //break
-    flow             = "flow" ~idchar     //continue
-    pitch            = "pitch" ~idchar    //try
+    if         	   = "if" ~idchar         //if
+    else       	   = "else" ~idchar       //else
+    stream         = "stream" ~idchar     //for
+    snap      	   = "snap"   ~idchar     //break
+    flow           = "flow" ~idchar       //continue
+    pitch          = "pitch" ~idchar      //try
     recast      	 = "recast" ~idchar     //repeat
     throw       	 = "throw" ~idchar      //throw
-    reel      	     = "reel" ~idchar     //return
-    tacklebox        = "tacklebox" ~idchar //case
+    reel      	   = "reel" ~idchar       //return
+    tacklebox      = "tacklebox" ~idchar  //case
     catch       	 = "catch" ~idchar      //catch
     school       	 = "school" ~idchar     //class
-    ocean      	     = "ocean" ~idchar    //public
-    lake             = "lake" ~idchar     //private
+    ocean      	   = "ocean" ~idchar      //public
+    lake           = "lake" ~idchar       //private
     lost         	 = "lost" ~idchar       //void
-    in          = "in" ~idchar            //in
-    tide        = "tide" ~idchar          //while
-    cast        = "cast" ~idchar          //print 
-    sock        = "sock" ~idchar          //null
-  	hooked      = "hooked" ~idchar        //true
-  	unhooked    = "unhooked" ~idchar      //false
+    in             = "in" ~idchar         //in
+    tide           = "tide" ~idchar       //while
+    cast           = "cast" ~idchar       //print 
+    sock           = "sock" ~idchar       //null
+  	hooked         = "hooked" ~idchar     //true
+  	unhooked       = "unhooked" ~idchar   //false
     
 
     keyword    = land | boat | function

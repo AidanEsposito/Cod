@@ -1,7 +1,3 @@
-// The code generator exports a single function, generate(program), which
-// accepts a program representation and returns the JavaScript translation
-// as a string.
-
 import {
   voidType,
   standardLibrary,
@@ -11,15 +7,8 @@ import {
 } from "./core.js"
 
 export default function generate(program) {
-  // When generating code for statements, we'll accumulate the lines of
-  // the target code here. When we finish generating, we'll join the lines
-  // with newlines and return the result.
   const output = []
 
-  // Variable and function names in JS will be suffixed with _1, _2, _3,
-  // etc. This is because "switch", for example, is a legal name in Carlos,
-  // but not in JS. So, the Carlos variable "switch" must become something
-  // like "switch_1". We handle this by mapping each name to its suffix.
   const targetName = ((mapping) => {
     return (entity) => {
       if (!mapping.has(entity)) {
@@ -32,8 +21,6 @@ export default function generate(program) {
   const gen = (node) => generators?.[node?.kind]?.(node) ?? node
 
   const generators = {
-    // Key idea: when generating an expression, just return the JS string; when
-    // generating a statement, write lines of translated JS to the output array.
     program(p) {
       p.statements.forEach(gen)
     },
@@ -49,13 +36,9 @@ export default function generate(program) {
       return `[${e.elements.map(gen).join(", ")}]`
     },
     variableDeclaration(d) {
-      // We don't care about const vs. let in the generated code! The analyzer has
-      // already checked that we never updated a const, so let is always fine.
       output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`)
     },
     variable(v) {
-      // Standard library constants just get special treatment
-      // if (v === standardLibrary.π) return "Math.PI"
       return targetName(v)
     },
     ifStatement(s) {
@@ -88,9 +71,6 @@ export default function generate(program) {
       s.body.forEach(gen)
       output.push("}")
     },
-    // conditional(e) {
-    //   return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(e.alternate)}))`
-    // },
     whileStatement(s) {
       output.push(`while (${gen(s.test)}) {`)
       s.body.forEach(gen)
@@ -131,7 +111,6 @@ export default function generate(program) {
     },
     functionCall(c) {
       const targetCode = `${gen(c.callee)}(${c.args.map(gen).join(", ")})`
-      // Calls in expressions vs in statements are handled differently
       if (c.callee.type.returnType !== voidType) {
         return targetCode
       } else {

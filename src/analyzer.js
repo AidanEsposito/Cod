@@ -93,26 +93,11 @@ export default function analyze(match) {
     must(e.type?.kind === "ArrayType", "Expected an array", at)
   }
 
-  // function mustHaveAStructType(e, at) {
-  //   must(e.type?.kind === "StructType", "Expected a struct", at)
-  // }
-
   function mustBothHaveTheSameType(e1, e2, at) {
     must(equivalent(e1.type, e2.type), "Operands do not have the same type", at)
   }
 
-  // function mustAllHaveSameType(expressions, at) {
-  //   // Used to check the elements of an array expression, and the two
-  //   // arms of a conditional expression, among other scenarios.
-  //   must(
-  //     expressions.slice(1).every((e) => equivalent(e.type, expressions[0].type)),
-  //     "Not all elements have the same type",
-  //     at
-  //   )
-  // }
-
   function mustBeAType(e, at) {
-    // This is a rather ugly hack
     must(e?.kind.endsWith("Type"), "Type expected", at)
   }
 
@@ -121,9 +106,7 @@ export default function analyze(match) {
   }
 
   function includesAsField(structType, type) {
-    // Whether the struct type has a field of type type, directly or indirectly
     return structType.fields.some((field) => field.type === type)
-    // || (field.type?.kind === "StructType" && includesAsField(field.type, type))
   }
 
   function mustNotBeSelfContaining(structType, at) {
@@ -137,24 +120,12 @@ export default function analyze(match) {
       (t1?.kind === "ArrayType" &&
         t2?.kind === "ArrayType" &&
         equivalent(t1.baseType, t2.baseType))
-      //   ||
-      // (t1?.kind === "FunctionType" &&
-      //   t2?.kind === "FunctionType" &&
-      //   equivalent(t1.returnType, t2.returnType) &&
-      //   t1.paramTypes.length === t2.paramTypes.length &&
-      //   t1.paramTypes.every((t, i) => equivalent(t, t2.paramTypes[i])))
     )
   }
 
   function assignable(fromType, toType) {
     return (
       toType == ANY || equivalent(fromType, toType)
-      // ||
-      // (fromType?.kind === "FunctionType" &&
-      //   toType?.kind === "FunctionType" &&
-      //   assignable(fromType.returnType, toType.returnType) &&
-      //   fromType.paramTypes.length === toType.paramTypes.length &&
-      //   toType.paramTypes.every((t, i) => assignable(t, fromType.paramTypes[i])))
     )
   }
 
@@ -166,15 +137,6 @@ export default function analyze(match) {
         return "string"
       case "BoolType":
         return "boolean"
-      // case "VoidType":   //CHECK
-      //   return "void"
-      // case "StructType":
-      //   return type.name
-      // case "FunctionType": {
-      //   const paramTypes = type.paramTypes.map(typeDescription).join(", ")
-      //   const returnType = typeDescription(type.returnType)
-      //   return `(${paramTypes})->${returnType}`
-      // }
       case "ArrayType":
         return `[${typeDescription(type.baseType)}]`
     }
@@ -187,18 +149,10 @@ export default function analyze(match) {
     must(assignable(e.type, type), message, at)
   }
 
-  // function mustNotBeReadOnly(e, at) {
-  //   must(!e.readOnly, `Cannot assign to constant ${e.name}`, at)
-  // }
-
   function mustHaveDistinctFields(type, at) {
     const fieldNames = new Set(type.fields.map((f) => f.name))
     must(fieldNames.size === type.fields.length, "Fields must be distinct", at)
   }
-
-  // function mustHaveMember(structType, field, at) {
-  //   must(structType.fields.map((f) => f.name).includes(field), "No such field", at)
-  // }
 
   function mustBeInLoop(at) {
     must(context.inLoop, "Break can only appear in a loop", at)
@@ -234,16 +188,6 @@ export default function analyze(match) {
     must(argCount === paramCount, message, at)
   }
 
-  // function mustNotBeInPrivateClass(at) {
-  //   let currentContext = context
-  //   while (currentContext !== null) {
-  //     if (currentContext.function && currentContext.function.isPrivate) {
-  //       throw new Error("Public classes can't be made in Private classes")
-  //     }
-  //     currentContext = currentContext.parent
-  //   }
-  // }
-
   function mustNotBeInFunction(at) {
     must(!context.function, "Classes can't be made inside of functions", at)
   }
@@ -263,7 +207,7 @@ export default function analyze(match) {
 
     FuncDecl_function_public(_ocean, type, tag, _parenL, params, _parenR, block) {
       const functionType = core.functionType(
-        undefined, //changed
+        undefined, 
         type.rep()
       )
       const functionEntity = core.fun(tag.sourceString, functionType)
@@ -272,7 +216,7 @@ export default function analyze(match) {
       context.add(tag.sourceString, functionEntity)
       context = context.newChildContext({ function: functionEntity })
       let analyzedParams = params.rep()
-      functionType.paramTypes = analyzedParams.map((p) => p.type) //changed
+      functionType.paramTypes = analyzedParams.map((p) => p.type)
       const body = block.rep()
       context = context.parent
       mustNotContainBreakInFunction({ at: tag })
@@ -304,48 +248,6 @@ export default function analyze(match) {
         body
       )
     },
-
-    // FuncDecl_function_public_no_params(_ocean, type, tag, _parenL, _parenR, block) {
-    //   const functionType = core.functionType([], undefined, type.rep())
-    //   const functionEntity = core.fun(tag.sourceString, functionType)
-    //   cannotAssignANumberToVoid(functionType, { at: tag })
-    //   mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-    //   context.add(tag.sourceString, functionEntity)
-    //   context = context.newChildContext({ function: functionEntity })
-    //   let analyzedParams = params.rep()
-    //   functionType.paramTypes = analyzedParams.map((p) => p.type)
-    //   const body = block.rep()
-    //   context = context.parent
-    //   mustNotContainBreakInFunction({ at: tag })
-    //   return core.functionDeclaration(
-    //     tag.sourceString,
-    //     functionEntity,
-    //     [],
-    //     analyzedParams,
-    //     body
-    //   )
-    // },
-
-    // FuncDecl_function_private_no_params(_lake, type, tag, _parenL, _parenR, block) {
-    //   const functionType = core.functionType([], undefined, type.rep())
-    //   const functionEntity = core.fun(tag.sourceString, functionType)
-    //   cannotAssignANumberToVoid(functionType, { at: tag })
-    //   mustNotAlreadyBeDeclared(tag.sourceString, { at: tag })
-    //   context.add(tag.sourceString, functionEntity)
-    //   context = context.newChildContext({ function: functionEntity })
-    //   let analyzedParams = params.rep()
-    //   functionType.paramTypes = analyzedParams.map((p) => p.type)
-    //   const body = block.rep()
-    //   context = context.parent
-    //   mustNotContainBreakInFunction({ at: tag })
-    //   return core.functionDeclaration(
-    //     tag.sourceString,
-    //     functionEntity,
-    //     [],
-    //     analyzedParams,
-    //     body
-    //   )
-    // },
 
     VarDecl_variable_public(_ocean, type, tag, _eq, exp) {
       const variable = core.variable(tag.sourceString, false, type.rep())
@@ -502,7 +404,6 @@ export default function analyze(match) {
       mustHaveBooleanType(test, { at: exp })
       context = context.newChildContext()
       const consequent = block.rep()
-      // Do NOT make a new context for the alternate!
       const alternate = trailingIfStatement.rep()
       return core.nestedIfStatement(test, consequent, alternate)
     },
@@ -607,9 +508,6 @@ export default function analyze(match) {
       mustBeCallable(callee, { at: tag })
       const exps = expList.asIteration().children
       const targetTypes = callee.type.paramTypes
-      // callee?.kind === "StructType"
-      //   // ? callee.fields.map((f) => f.type)
-      //   callee.type.paramTypes
       mustHaveCorrectArgumentCount(exps.length, targetTypes.length, { at: parenL })
       const args = exps.map((exp, i) => {
         const arg = exp.rep()
@@ -617,9 +515,6 @@ export default function analyze(match) {
         return arg
       })
       return core.functionCall(callee, args)
-      // return callee?.kind === "StructType"
-      //   ? core.constructorCall(callee, args)
-      //   : core.functionCall(callee, args)
     },
 
     Primary_parens(_open, expression, _close) {
